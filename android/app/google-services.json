@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "500107150753",
+    "firebase_url": "https://siir-929b4-default-rtdb.firebaseio.com",
+    "project_id": "siir-929b4",
+    "storage_bucket": "siir-929b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500107150753:android:ca83552e007e67885077e0",
+        "android_client_info": {
+          "package_name": "com.codesteem.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMkNmuRAnhYKZwGke2r9dbD4GEN62_t3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500107150753:android:cffb9ae5eaf5b5375077e0",
+        "android_client_info": {
+          "package_name": "com.codesteem.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMkNmuRAnhYKZwGke2r9dbD4GEN62_t3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
