@@ -12,8 +12,8 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:label="driver"
+        android:icon="@mipmap/launcher_icon"
+        android:label="SIRR Driver"
         android:usesCleartextTraffic="true"
         tools:replace="android:label"
         android:enableOnBackInvokedCallback="true">

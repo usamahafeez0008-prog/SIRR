@@ -10,7 +10,6 @@ import 'package:driver/payment/rozorpayConroller.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -46,15 +45,13 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
-    final bool isDark = themeChange.getThem();
+    final bool isDark = false; // Forced Light Mode temporarily for visibility
 
     return GetX<SubscriptionController>(
         init: SubscriptionController(),
         builder: (controller) {
           return Scaffold(
-            backgroundColor: !isDark
-                ? AppColors.darkBackground
-                : AppColors.moroccoBackground,
+            backgroundColor: AppColors.moroccoBackground,
             body: Stack(
               children: [
                 // 1. Immersive Animated Background
@@ -65,7 +62,7 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
                       return CustomPaint(
                         painter: ModernMoroccanPainter(
                           scrollOffset: _backgroundController.value,
-                          isDark: !isDark,
+                          isDark: isDark,
                         ),
                       );
                     },
@@ -80,7 +77,7 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
 
                     Expanded(
                       child: controller.isLoading.value
-                          ? Center(child: Constant.loader(isDarkTheme: !isDark))
+                          ? Center(child: Constant.loader(isDarkTheme: isDark))
                           : Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
@@ -88,58 +85,15 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
                                   ? Constant.showEmptyView(
                                       message:
                                           "Subscription Plan Not Found.".tr)
-                                  : ListView.builder(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 30),
-                                      itemCount: controller
-                                          .subscriptionPlanList.length,
-                                      itemBuilder: (context, index) {
-                                        final subscriptionPlanModel = controller
-                                            .subscriptionPlanList[index];
-                                        return SubscriptionPlanWidget(
-                                          onContainClick: () {
-                                            controller.selectedSubscriptionPlan
-                                                .value = subscriptionPlanModel;
-                                            controller.totalAmount.value =
-                                                double.parse(
-                                                    subscriptionPlanModel
-                                                            .price ??
-                                                        '0.0');
-                                            controller.update();
-                                          },
-                                          onClick: () {
-                                            if (controller
-                                                    .selectedSubscriptionPlan
-                                                    .value
-                                                    .id ==
-                                                subscriptionPlanModel.id) {
-                                              if (controller
-                                                          .selectedSubscriptionPlan
-                                                          .value
-                                                          .type ==
-                                                      'free' ||
-                                                  controller
-                                                          .selectedSubscriptionPlan
-                                                          .value
-                                                          .id ==
-                                                      Constant
-                                                          .commissionSubscriptionID) {
-                                                controller.selectedPaymentMethod
-                                                    .value = 'free';
-                                                controller.placeOrder();
-                                              } else {
-                                                paymentMethodDialog(
-                                                    context, controller);
-                                              }
-                                            }
-                                          },
-                                          subscriptionPlanModel:
-                                              subscriptionPlanModel,
-                                        );
-                                      },
+                                  : _buildSubscriptionGrid(
+                                      context,
+                                      controller,
                                     ),
                             ),
                     ),
+                    SizedBox(
+                      height: 40,
+                    )
                   ],
                 ),
               ],
@@ -151,16 +105,12 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
   Widget _buildHeader(
       BuildContext context, SubscriptionController controller, bool isDark) {
     return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 10,
-        bottom: 20,
-        left: 20,
-        right: 20,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Column(
         children: [
           Row(
             children: [
+              /*
               if (controller.isShowing.value)
                 IconButton(
                   icon: Icon(
@@ -170,13 +120,13 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
                   ),
                   onPressed: () => Get.back(),
                 ),
+              */
               const Spacer(),
               _buildModernLogo(),
               const Spacer(),
-              if (controller.isShowing.value) const SizedBox(width: 48),
+              // if (controller.isShowing.value) const SizedBox(width: 48),
             ],
           ),
-          const SizedBox(height: 20),
           ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
               colors: [AppColors.moroccoRed, AppColors.moroccoGreen],
@@ -210,8 +160,157 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen>
   Widget _buildModernLogo() {
     return Image.asset(
       "assets/images/splash_image.png",
-      width: 80,
+      height: 150,
       fit: BoxFit.contain,
+    );
+  }
+
+  Widget _buildSubscriptionGrid(
+      BuildContext context, SubscriptionController controller) {
+    final plans = controller.subscriptionPlanList;
+    /*
+    final bool hasOddItem = plans.length.isOdd;
+
+    return LayoutBuilder(builder: (context, constraints) {
+      final double spacing = 14;
+      final double cardWidth = (constraints.maxWidth - spacing) / 2;
+
+      List<Widget> rows = [];
+
+      // Build pairs
+      for (int i = 0; i < plans.length - (hasOddItem ? 1 : 0); i += 2) {
+        rows.add(Row(
+          children: [
+            SizedBox(
+              width: cardWidth,
+              height: cardWidth,
+              child: SubscriptionPlanWidget(
+                onContainClick: () {
+                  controller.selectedSubscriptionPlan.value = plans[i];
+                  controller.totalAmount.value =
+                      double.parse(plans[i].price ?? '0.0');
+                  controller.update();
+                },
+                onClick: () {
+                  if (controller.selectedSubscriptionPlan.value.id ==
+                      plans[i].id) {
+                    if (controller.selectedSubscriptionPlan.value.type ==
+                            'free' ||
+                        controller.selectedSubscriptionPlan.value.id ==
+                            Constant.commissionSubscriptionID) {
+                      controller.selectedPaymentMethod.value = 'free';
+                      controller.placeOrder();
+                    } else {
+                      paymentMethodDialog(context, controller);
+                    }
+                  }
+                },
+                subscriptionPlanModel: plans[i],
+              ),
+            ),
+            SizedBox(width: spacing),
+            SizedBox(
+              width: cardWidth,
+              height: cardWidth,
+              child: SubscriptionPlanWidget(
+                onContainClick: () {
+                  controller.selectedSubscriptionPlan.value = plans[i + 1];
+                  controller.totalAmount.value =
+                      double.parse(plans[i + 1].price ?? '0.0');
+                  controller.update();
+                },
+                onClick: () {
+                  if (controller.selectedSubscriptionPlan.value.id ==
+                      plans[i + 1].id) {
+                    if (controller.selectedSubscriptionPlan.value.type ==
+                            'free' ||
+                        controller.selectedSubscriptionPlan.value.id ==
+                            Constant.commissionSubscriptionID) {
+                      controller.selectedPaymentMethod.value = 'free';
+                      controller.placeOrder();
+                    } else {
+                      paymentMethodDialog(context, controller);
+                    }
+                  }
+                },
+                subscriptionPlanModel: plans[i + 1],
+              ),
+            ),
+          ],
+        ));
+        rows.add(SizedBox(height: spacing));
+      }
+
+      // If odd count, center the last card
+      if (hasOddItem) {
+        final last = plans.last;
+        rows.add(
+          Center(
+            child: SizedBox(
+              width: cardWidth,
+              height: cardWidth,
+              child: SubscriptionPlanWidget(
+                onContainClick: () {
+                  controller.selectedSubscriptionPlan.value = last;
+                  controller.totalAmount.value =
+                      double.parse(last.price ?? '0.0');
+                  controller.update();
+                },
+                onClick: () {
+                  if (controller.selectedSubscriptionPlan.value.id == last.id) {
+                    if (controller.selectedSubscriptionPlan.value.type ==
+                            'free' ||
+                        controller.selectedSubscriptionPlan.value.id ==
+                            Constant.commissionSubscriptionID) {
+                      controller.selectedPaymentMethod.value = 'free';
+                      controller.placeOrder();
+                    } else {
+                      paymentMethodDialog(context, controller);
+                    }
+                  }
+                },
+                subscriptionPlanModel: last,
+              ),
+            ),
+          ),
+        );
+      }
+
+      return SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 10, bottom: 30),
+        child: Column(children: rows),
+      );
+    });
+    */
+
+    return ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(top: 10, bottom: 30),
+      itemCount: plans.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        final plan = plans[index];
+        return SubscriptionPlanWidget(
+          onContainClick: () {
+            controller.selectedSubscriptionPlan.value = plan;
+            controller.totalAmount.value = double.parse(plan.price ?? '0.0');
+            controller.update();
+          },
+          onClick: () {
+            if (controller.selectedSubscriptionPlan.value.id == plan.id) {
+              if (controller.selectedSubscriptionPlan.value.type == 'free' ||
+                  controller.selectedSubscriptionPlan.value.id ==
+                      Constant.commissionSubscriptionID) {
+                controller.selectedPaymentMethod.value = 'free';
+                controller.placeOrder();
+              } else {
+                //paymentMethodDialog(context, controller);
+              }
+            }
+          },
+          subscriptionPlanModel: plan,
+        );
+      },
     );
   }
 
@@ -1763,7 +1862,7 @@ class SubscriptionPlanWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
-    final bool isDark = !themeChange.getThem();
+    final bool isDark = false; // Forced Light Mode temporarily for visibility
 
     final controller = Get.find<SubscriptionController>();
     return Obx(() {
@@ -1779,170 +1878,181 @@ class SubscriptionPlanWidget extends StatelessWidget {
         onTap: onContainClick,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          margin: const EdgeInsets.only(bottom: 20),
-          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected
+              color: isActive
                   ? AppColors.moroccoGreen
-                  : (isDark
-                      ? Colors.white12
-                      : AppColors.moroccoGreen.withOpacity(0.2)),
-              width: isSelected ? 2 : 1,
+                  : (isSelected
+                      ? AppColors.moroccoGreen
+                      : (isDark
+                          ? Colors.white12
+                          : Colors.grey.withOpacity(0.15))),
+              width: (isSelected || isActive) ? 2.5 : 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
-                blurRadius: isSelected ? 40 : 20,
-                offset: const Offset(0, 10),
+                color: (isSelected || isActive)
+                    ? AppColors.moroccoGreen.withOpacity(0.15)
+                    : Colors.black.withOpacity(isDark ? 0.2 : 0.04),
+                blurRadius: (isSelected || isActive) ? 20 : 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.moroccoRed.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: NetworkImageWidget(
-                      imageUrl: subscriptionPlanModel.image ?? '',
-                      fit: BoxFit.cover,
-                      width: 40,
-                      height: 40,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
+              // Main card content
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          subscriptionPlanModel.name ?? '',
-                          style: GoogleFonts.outfit(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
+                        // Plan Name
+                        Expanded(
+                          child: Text(
+                            subscriptionPlanModel.name ?? '',
+                            style: GoogleFonts.outfit(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
                           ),
                         ),
-                        if (isActive)
-                          Container(
-                            margin: const EdgeInsets.only(top: 4),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: Colors.green.withOpacity(0.2)),
-                            ),
-                            child: Text(
-                              "Currently Active".tr,
+                        // Price
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              subscriptionPlanModel.type == "free"
+                                  ? "Free".tr
+                                  : (() {
+                                      final sym =
+                                          Constant.currencyModel?.symbol ??
+                                              'MAD';
+                                      final digits = Constant
+                                              .currencyModel?.decimalDigits ??
+                                          2;
+                                      final atRight = Constant
+                                              .currencyModel?.symbolAtRight ??
+                                          false;
+                                      final price = double.parse(
+                                              subscriptionPlanModel.price ??
+                                                  '0.0')
+                                          .toStringAsFixed(digits);
+                                      return atRight
+                                          ? "$price $sym"
+                                          : "$sym $price";
+                                    })(),
                               style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.green,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.moroccoRed,
                               ),
                             ),
-                          ),
+                            Text(
+                              subscriptionPlanModel.expiryDay == "-1"
+                                  ? "LifeTime".tr
+                                  : "${subscriptionPlanModel.expiryDay} ${'Days'.tr}",
+                              style: GoogleFonts.outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white38 : Colors.black38,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
+                    const SizedBox(height: 16),
+                    // Description from Firebase
+                    if (subscriptionPlanModel.description != null &&
+                        subscriptionPlanModel.description!.isNotEmpty) ...[
                       Text(
-                        subscriptionPlanModel.type == "free"
-                            ? "Free".tr
-                            : Constant.amountShow(
-                                amount: double.parse(
-                                        subscriptionPlanModel.price ?? '0.0')
-                                    .toString()),
-                        style: GoogleFonts.outfit(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.moroccoRed,
-                        ),
-                      ),
-                      Text(
-                        subscriptionPlanModel.expiryDay == "-1"
-                            ? "LifeTime".tr
-                            : "${subscriptionPlanModel.expiryDay} ${'Days'.tr}",
+                        subscriptionPlanModel.description!,
                         style: GoogleFonts.outfit(
                           fontSize: 14,
-                          color: isDark ? Colors.white38 : Colors.black38,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          height: 1.4,
                         ),
                       ),
+                      const SizedBox(height: 16),
                     ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(
-                subscriptionPlanModel.description ?? '',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  color: isDark ? Colors.white60 : Colors.black54,
+                    // Plan Points from Firebase
+                    if (subscriptionPlanModel.planPoints != null &&
+                        subscriptionPlanModel.planPoints!.isNotEmpty) ...[
+                      ...subscriptionPlanModel.planPoints!
+                          .map((point) => _buildPointItem(point, isDark)),
+                      const SizedBox(height: 20),
+                    ],
+                    // Subscribe button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: onClick,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isSelected
+                              ? AppColors.moroccoRed
+                              : (isDark
+                                  ? Colors.white.withOpacity(0.08)
+                                  : Colors.grey.withOpacity(0.1)),
+                          foregroundColor: isSelected
+                              ? Colors.white
+                              : (isDark ? Colors.white54 : Colors.black38),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: Text(
+                          isActive
+                              ? "Renew".tr
+                              : (isSelected
+                                  ? "Subscribe Now".tr
+                                  : "Select Plan".tr),
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
 
-              // Plan Points
-              if (subscriptionPlanModel.id == Constant.commissionSubscriptionID)
-                _buildPointItem(
-                  '${'Pay a commission of'.tr} ${Constant.adminCommission?.type == 'percentage' ? "${Constant.adminCommission?.amount}%" : "${Constant.amountShow(amount: Constant.adminCommission?.amount)} ${'Flat'.tr}"} ${'on each order.'.tr}',
-                  isDark,
-                ),
-
-              if (subscriptionPlanModel.planPoints != null)
-                ...subscriptionPlanModel.planPoints!
-                    .map((point) => _buildPointItem(point, isDark))
-                    .toList(),
-
-              _buildPointItem(
-                '${'Accept booking limits :'.tr} ${subscriptionPlanModel.bookingLimit == '-1' ? 'Unlimited'.tr : subscriptionPlanModel.bookingLimit ?? '0'}',
-                isDark,
-              ),
-
-              const SizedBox(height: 24),
-
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: onClick,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isSelected
-                        ? AppColors.moroccoRed
-                        : (isDark
-                            ? Colors.white.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.1)),
-                    foregroundColor: isSelected
-                        ? Colors.white
-                        : (isDark ? Colors.white70 : Colors.black87),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: Text(
-                    isActive
-                        ? "Renew".tr
-                        : (isSelected ? "Subscribe Now".tr : "Select Plan".tr),
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              // "Currently Active" badge
+              if (isActive)
+                Positioned(
+                  top: 0,
+                  right: 20,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: const BoxDecoration(
+                      color: AppColors.moroccoGreen,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "Active".tr,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -1952,17 +2062,19 @@ class SubscriptionPlanWidget extends StatelessWidget {
 
   Widget _buildPointItem(String text, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(4),
+            margin: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: AppColors.moroccoGreen.withOpacity(0.1),
+              color: AppColors.moroccoGreen.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.check,
-                size: 12, color: AppColors.moroccoGreen),
+                size: 10, color: AppColors.moroccoGreen),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1971,6 +2083,7 @@ class SubscriptionPlanWidget extends StatelessWidget {
               style: GoogleFonts.outfit(
                 fontSize: 14,
                 color: isDark ? Colors.white70 : Colors.black87,
+                height: 1.3,
               ),
             ),
           ),

@@ -50,6 +50,7 @@ class DashBoardController extends GetxController {
           case 7:
             return const ReferralScreen();
           case 8:
+            // yahan change kea ha
             if (Constant.isVerifyDocument == true) {
               return const OnlineRegistrationScreen();
             } else {
@@ -102,6 +103,7 @@ class DashBoardController extends GetxController {
             return const ReferralScreen();
           /// Check Here doucment Verification Screen
             case 8:
+              // yahan change kea ha
             if (Constant.isVerifyDocument == true) {
               return const OnlineRegistrationScreen();
             } else {
