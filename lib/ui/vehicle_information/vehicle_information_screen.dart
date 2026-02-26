@@ -348,12 +348,12 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
 
   Widget _buildHeader(BuildContext context, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
       child: Column(
         children: [
           Row(
             children: [
-              /* InkWell(
+              InkWell(
                 onTap: () => Get.back(),
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
@@ -373,7 +373,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
-              ),*/
+              ),
               const Spacer(),
               Image.asset(
                 "assets/images/splash_image.png",
@@ -381,6 +381,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 fit: BoxFit.contain,
               ),
               const Spacer(),
+              const SizedBox(width: 40), // Placeholder to center logo
             ],
           ),
           ShaderMask(
@@ -870,29 +871,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                     width: 1,
                   )
                 : null,
-            // Glowing halo
-            // boxShadow: isSelected
-            //     ? [
-            //         BoxShadow(
-            //           color: AppColors.moroccoRed.withOpacity(0.45),
-            //           blurRadius: 4,
-            //           spreadRadius: 1,
-            //           offset: const Offset(0, 4),
-            //         ),
-            //         BoxShadow(
-            //           color: AppColors.moroccoGreen.withOpacity(0.2),
-            //           blurRadius: 8,
-            //           spreadRadius: -4,
-            //           offset: const Offset(0, 4),
-            //         ),
-            //       ]
-            //     : [
-            //         BoxShadow(
-            //           color: Colors.black.withOpacity(isDark ? 0.25 : 0.07),
-            //           blurRadius: 10,
-            //           offset: const Offset(0, 4),
-            //         ),
-            //       ],
+
           ),
           // Inner padding creates the visible 2.5px gradient border ring
           padding: isSelected ? const EdgeInsets.all(2.5) : EdgeInsets.zero,

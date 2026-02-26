@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
@@ -17,6 +20,7 @@ import 'package:driver/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class InformationScreen extends StatefulWidget {
@@ -121,6 +125,7 @@ class _InformationScreenState extends State<InformationScreen>
                           // 3. Form Card
                           _buildGlassCard(context, !isDark, controller),
 
+                          const SizedBox(height: 40),
                         ],
                       ),
                     ),
@@ -177,11 +182,19 @@ class _InformationScreenState extends State<InformationScreen>
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          _buildProfileImage(context, controller, isDark),
+          const SizedBox(height: 24),
           _buildTextField(
-            hintText: 'Full name'.tr,
-            controller: controller.fullNameController.value,
+            hintText: 'Last name'.tr,
+            controller: controller.lastNameController.value,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 16),
+          _buildTextField(
+            hintText: 'First name'.tr,
+            controller: controller.firstNameController.value,
             isDark: isDark,
           ),
           const SizedBox(height: 16),
@@ -193,12 +206,12 @@ class _InformationScreenState extends State<InformationScreen>
             isDark: isDark,
             enable: controller.loginType.value != Constant.googleLoginType,
           ),
-          const SizedBox(height: 16),
-          _buildTextField(
-            hintText: 'Referral Code (Optional)'.tr,
-            controller: controller.referralCodeController.value,
-            isDark: isDark,
-          ),
+          // const SizedBox(height: 16),
+          // _buildTextField(
+          //   hintText: 'Referral Code (Optional)'.tr,
+          //   controller: controller.referralCodeController.value,
+          //   isDark: isDark,
+          // ),
           const SizedBox(height: 32),
           _buildPrimaryButton(controller),
         ],
@@ -306,8 +319,10 @@ class _InformationScreenState extends State<InformationScreen>
       ),
       child: ElevatedButton(
         onPressed: () async {
-          if (controller.fullNameController.value.text.isEmpty) {
-            ShowToastDialog.showToast("Please enter full name".tr);
+          if (controller.lastNameController.value.text.isEmpty) {
+            ShowToastDialog.showToast("Please enter last name".tr);
+          } else if (controller.firstNameController.value.text.isEmpty) {
+            ShowToastDialog.showToast("Please enter first name".tr);
           } else if (controller.emailController.value.text.isEmpty) {
             ShowToastDialog.showToast("Please enter email".tr);
           } else if (controller.phoneNumberController.value.text.isEmpty) {
@@ -324,7 +339,7 @@ class _InformationScreenState extends State<InformationScreen>
                 if (value == true) {
                   ShowToastDialog.showLoader("Please wait".tr);
                   DriverUserModel userModel = controller.userModel.value;
-                  userModel.fullName = controller.fullNameController.value.text;
+                  userModel.fullName =controller.firstNameController.value.text + controller.lastNameController.value.text;
                   userModel.email = controller.emailController.value.text;
                   userModel.countryCode = controller.countryCode.value;
                   userModel.phoneNumber =
@@ -335,6 +350,18 @@ class _InformationScreenState extends State<InformationScreen>
                   userModel.createdAt = Timestamp.now();
                   String token = await NotificationService.getToken();
                   userModel.fcmToken = token;
+
+                  if (controller.profileImage.value.isNotEmpty) {
+                    userModel.profilePic =
+                        await Constant.uploadUserImageToFireStorage(
+                            File(controller.profileImage.value),
+                            "profileImage/${FireStoreUtils.getCurrentUid()}",
+                            File(controller.profileImage.value)
+                                .path
+                                .split('/')
+                                .last);
+                  }
+
                   await FireStoreUtils.getReferralUserByCode(
                           controller.referralCodeController.value.text)
                       .then((value) async {
@@ -395,7 +422,7 @@ class _InformationScreenState extends State<InformationScreen>
             } else {
               ShowToastDialog.showLoader("Please wait".tr);
               DriverUserModel userModel = controller.userModel.value;
-              userModel.fullName = controller.fullNameController.value.text;
+              userModel.fullName = controller.firstNameController.value.text + controller.lastNameController.value.text;
               userModel.email = controller.emailController.value.text;
               userModel.countryCode = controller.countryCode.value;
               userModel.phoneNumber =
@@ -406,6 +433,17 @@ class _InformationScreenState extends State<InformationScreen>
               userModel.createdAt = Timestamp.now();
               String token = await NotificationService.getToken();
               userModel.fcmToken = token;
+
+              if (controller.profileImage.value.isNotEmpty) {
+                userModel.profilePic =
+                    await Constant.uploadUserImageToFireStorage(
+                        File(controller.profileImage.value),
+                        "profileImage/${FireStoreUtils.getCurrentUid()}",
+                        File(controller.profileImage.value)
+                            .path
+                            .split('/')
+                            .last);
+              }
 
               ReferralModel referralModel = ReferralModel(
                 id: FireStoreUtils.getCurrentUid(),
@@ -526,4 +564,146 @@ class ModernMoroccanPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant ModernMoroccanPainter oldDelegate) =>
       oldDelegate.scrollOffset != scrollOffset || oldDelegate.isDark != isDark;
+}
+
+extension InformationExtensions on _InformationScreenState {
+  Widget _buildProfileImage(BuildContext context,
+      InformationController controller, bool isDarkState) {
+    return Center(
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Obx(() => Container(
+                height: 120,
+                width: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.moroccoGreen.withOpacity(0.5),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(60),
+                  child: controller.profileImage.value.isEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: Constant.userPlaceHolder,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                  color: AppColors.moroccoRed)),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person, size: 60),
+                        )
+                      : Image.file(
+                          File(controller.profileImage.value),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              )),
+          InkWell(
+            onTap: () => buildBottomSheet(context, controller),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.moroccoGreen,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  buildBottomSheet(BuildContext context, InformationController controller) {
+    return showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Select Profile Image".tr,
+                  style: GoogleFonts.outfit(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildPickerOption(
+                      icon: Icons.camera_alt_rounded,
+                      label: "Camera".tr,
+                      onTap: () =>
+                          controller.pickFile(source: ImageSource.camera),
+                    ),
+                    _buildPickerOption(
+                      icon: Icons.photo_library_rounded,
+                      label: "Gallery".tr,
+                      onTap: () =>
+                          controller.pickFile(source: ImageSource.gallery),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
+          );
+        });
+  }
+
+  Widget _buildPickerOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.moroccoGreen.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppColors.moroccoGreen, size: 30),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: GoogleFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

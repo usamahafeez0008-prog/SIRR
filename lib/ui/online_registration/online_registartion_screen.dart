@@ -158,7 +158,7 @@ class _OnlineRegistrationScreenState extends State<OnlineRegistrationScreen>
                 fit: BoxFit.contain,
               ),
               const Spacer(),
-              // Placeholder to balance layout
+              const SizedBox(width: 40), // Placeholder to center logo
             ],
           ),
 

@@ -323,11 +323,12 @@ class _LoginScreenState extends State<LoginScreen>
           icon: 'assets/icons/ic_google.png',
           isDark: isDark,
           onTap: () async {
-            ShowToastDialog.showLoader("Connecting...".tr);
-            await controller.signInWithGoogle().then((value) async {
-              ShowToastDialog.closeLoader();
-              if (value != null) _handleSocialLogin(value, "google");
-            });
+            ShowToastDialog.showLoader("Coming Soon".tr);
+            // ShowToastDialog.showLoader("Connecting...".tr);
+            // await controller.signInWithGoogle().then((value) async {
+            //   ShowToastDialog.closeLoader();
+            //   if (value != null) _handleSocialLogin(value, "google");
+            // });
           },
         ),
         const SizedBox(width: 20),
@@ -414,8 +415,9 @@ class _LoginScreenState extends State<LoginScreen>
         children: [
           TextSpan(
             recognizer: TapGestureRecognizer()
-              ..onTap =
-                  () => Get.to(const TermsAndConditionScreen(type: "terms")),
+              ..onTap = (){},
+                  // () => Get.to(const TermsAndConditionScreen(type: "terms")),
+
             text: 'Terms'.tr,
             style: const TextStyle(
                 fontWeight: FontWeight.bold, color: AppColors.moroccoRed),
@@ -423,8 +425,8 @@ class _LoginScreenState extends State<LoginScreen>
           const TextSpan(text: ' & '),
           TextSpan(
             recognizer: TapGestureRecognizer()
-              ..onTap =
-                  () => Get.to(const TermsAndConditionScreen(type: "privacy")),
+              ..onTap = (){},
+                  //() => Get.to(const TermsAndConditionScreen(type: "privacy")),
             text: 'Privacy'.tr,
             style: const TextStyle(
                 fontWeight: FontWeight.bold, color: AppColors.moroccoGreen),

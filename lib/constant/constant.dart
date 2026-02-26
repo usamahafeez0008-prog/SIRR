@@ -89,8 +89,8 @@ class Constant {
     return Center(
       child: CircularProgressIndicator(
           color: isDarkTheme
-              ? AppColors.darksecondprimary
-              : AppColors.lightsecondprimary,
+              ? AppColors.moroccoGreen
+              : AppColors.moroccoGreen,
           strokeWidth: strokeWidth),
     );
   }

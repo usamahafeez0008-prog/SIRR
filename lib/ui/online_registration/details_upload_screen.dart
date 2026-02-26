@@ -309,6 +309,7 @@ class _DetailsUploadScreenState extends State<DetailsUploadScreen>
         Expanded(
           child: Text(
             label,
+            maxLines: 2,
             style: GoogleFonts.outfit(
               fontSize: 14,
               fontWeight: FontWeight.w600,
