@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/vehicle_information_controller.dart';
+import 'package:driver/controller/dash_board_controller.dart';
 import 'package:driver/model/service_model.dart';
 import 'package:driver/model/zone_model.dart';
 import 'package:driver/themes/app_colors.dart';
@@ -354,7 +355,14 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
           Row(
             children: [
               InkWell(
-                onTap: () => Get.back(),
+                onTap: () {
+                  if (Navigator.of(context).canPop()) {
+                    Get.back();
+                  } else if (Get.isRegistered<DashBoardController>()) {
+                    Get.find<DashBoardController>().selectedDrawerIndex.value =
+                        0;
+                  }
+                },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -871,7 +879,6 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                     width: 1,
                   )
                 : null,
-
           ),
           // Inner padding creates the visible 2.5px gradient border ring
           padding: isSelected ? const EdgeInsets.all(2.5) : EdgeInsets.zero,

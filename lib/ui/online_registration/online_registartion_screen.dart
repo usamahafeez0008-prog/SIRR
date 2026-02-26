@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:driver/constant/constant.dart';
 import 'package:driver/controller/online_registration_controller.dart';
+import 'package:driver/controller/dash_board_controller.dart';
 import 'package:driver/model/document_model.dart';
 import 'package:driver/model/driver_document_model.dart';
 import 'package:driver/themes/app_colors.dart';
@@ -130,7 +131,14 @@ class _OnlineRegistrationScreenState extends State<OnlineRegistrationScreen>
           Row(
             children: [
               InkWell(
-                onTap: () => Get.back(),
+                onTap: () {
+                  if (Navigator.of(context).canPop()) {
+                    Get.back();
+                  } else if (Get.isRegistered<DashBoardController>()) {
+                    Get.find<DashBoardController>().selectedDrawerIndex.value =
+                        0;
+                  }
+                },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.all(10),

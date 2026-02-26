@@ -323,12 +323,11 @@ class _LoginScreenState extends State<LoginScreen>
           icon: 'assets/icons/ic_google.png',
           isDark: isDark,
           onTap: () async {
-            ShowToastDialog.showLoader("Coming Soon".tr);
-            // ShowToastDialog.showLoader("Connecting...".tr);
-            // await controller.signInWithGoogle().then((value) async {
-            //   ShowToastDialog.closeLoader();
-            //   if (value != null) _handleSocialLogin(value, "google");
-            // });
+            ShowToastDialog.showLoader("Connecting...".tr);
+            await controller.signInWithGoogle().then((value) async {
+              ShowToastDialog.closeLoader();
+              if (value != null) _handleSocialLogin(value, "google");
+            });
           },
         ),
         const SizedBox(width: 20),

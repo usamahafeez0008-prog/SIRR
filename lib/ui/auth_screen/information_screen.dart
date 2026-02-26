@@ -185,18 +185,19 @@ class _InformationScreenState extends State<InformationScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildProfileImage(context, controller, isDark),
-          const SizedBox(height: 24),
-          _buildTextField(
-            hintText: 'Last name'.tr,
-            controller: controller.lastNameController.value,
-            isDark: isDark,
-          ),
           const SizedBox(height: 16),
           _buildTextField(
             hintText: 'First name'.tr,
             controller: controller.firstNameController.value,
             isDark: isDark,
           ),
+          const SizedBox(height: 24),
+          _buildTextField(
+            hintText: 'Last name'.tr,
+            controller: controller.lastNameController.value,
+            isDark: isDark,
+          ),
+
           const SizedBox(height: 16),
           _buildPhoneField(controller, isDark),
           const SizedBox(height: 16),
@@ -277,7 +278,7 @@ class _InformationScreenState extends State<InformationScreen>
               controller.countryCode.value = value.dialCode.toString();
             },
             dialogBackgroundColor:
-                isDark ? AppColors.darkBackground : AppColors.background,
+                !isDark ? AppColors.moroccoGreen : AppColors.background,
             initialSelection: controller.countryCode.value,
             textStyle: GoogleFonts.outfit(
               color: isDark ? Colors.white70 : Colors.black87,

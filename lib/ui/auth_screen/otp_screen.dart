@@ -132,7 +132,7 @@ class _OtpScreenState extends State<OtpScreen>
                         const SizedBox(height: 32),
 
                         // Resend Section
-                        _buildResendSection(!isDark),
+                        //_buildResendSection(!isDark),
 
                         const SizedBox(height: 40),
                       ],

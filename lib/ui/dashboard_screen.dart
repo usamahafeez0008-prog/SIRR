@@ -217,46 +217,133 @@ class DashBoardScreen extends StatelessWidget {
 
   Future<void> _showAlertDialog(BuildContext context, String type) async {
     final controllerDashBoard = Get.put(DashBoardController());
+    final themeChange = Provider.of<DarkThemeProvider>(context, listen: false);
+    final bool isDark = themeChange.getThem();
 
     return showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          // <-- SEE HERE
-          title: Text('Information'.tr),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white12
+                    : AppColors.moroccoGreen.withOpacity(0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.moroccoRed.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.info_outline_rounded,
+                    color: AppColors.moroccoRed,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Text(
-                    'To start earning with SIRR you need to fill in your personal information'
-                        .tr),
+                  'Information'.tr,
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'To start earning with SIRR you need to fill in your personal information'
+                      .tr,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(
+                            color: isDark ? Colors.white38 : Colors.black26,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          'No'.tr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white70 : Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (type == "document") {
+                            Get.back(); // close dialog
+                            Get.to(() => const OnlineRegistrationScreen());
+                          } else {
+                            if (Constant.isVerifyDocument == true) {
+                              controllerDashBoard.onSelectItem(9);
+                            } else {
+                              controllerDashBoard.onSelectItem(8);
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.moroccoGreen,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          'Yes'.tr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('No'.tr),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            TextButton(
-              child: Text('Yes'.tr),
-              onPressed: () {
-                if (type == "document") {
-                  Get.back(); // close dialog
-                  Get.to(() => const OnlineRegistrationScreen());
-                } else {
-                  if (Constant.isVerifyDocument == true) {
-                    controllerDashBoard.onSelectItem(9);
-                  } else {
-                    controllerDashBoard.onSelectItem(8);
-                  }
-                }
-              },
-            ),
-          ],
         );
       },
     );

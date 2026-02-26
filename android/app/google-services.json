@@ -13,7 +13,20 @@
           "package_name": "com.codesteem.customer"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "500107150753-pbp9si4ghsg5n2kjtjo6r9nthgsp2rh9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codesteem.customer",
+            "certificate_hash": "88cb411e0408d750702d88f1b580031c13396f3d"
+          }
+        },
+        {
+          "client_id": "500107150753-s0cthej3u22g1bujr4kqo0prm5n3tbsa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBMkNmuRAnhYKZwGke2r9dbD4GEN62_t3E"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500107150753-s0cthej3u22g1bujr4kqo0prm5n3tbsa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +50,20 @@
           "package_name": "com.codesteem.driver"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "500107150753-9ndm1a9dejdpeatq8fncjp0vq05fq0ml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codesteem.driver",
+            "certificate_hash": "88cb411e0408d750702d88f1b580031c13396f3d"
+          }
+        },
+        {
+          "client_id": "500107150753-s0cthej3u22g1bujr4kqo0prm5n3tbsa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBMkNmuRAnhYKZwGke2r9dbD4GEN62_t3E"
@@ -40,7 +71,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500107150753-s0cthej3u22g1bujr4kqo0prm5n3tbsa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
