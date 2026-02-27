@@ -17,6 +17,7 @@ import 'package:driver/ui/settings_screen/setting_screen.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_history.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
 import 'package:driver/ui/vehicle_information/vehicle_information_screen.dart';
+import 'package:driver/utils/Preferences.dart';
 import 'package:driver/ui/wallet/wallet_screen.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/utils/utils.dart';
@@ -57,11 +58,17 @@ class DashBoardController extends GetxController {
               return const VehicleInformationScreen();
             }
           case 9:
-            return Constant.isVerifyDocument == true ? const VehicleInformationScreen() : const SettingScreen();
+            return Constant.isVerifyDocument == true
+                ? const VehicleInformationScreen()
+                : const SettingScreen();
           case 10:
-            return Constant.isVerifyDocument == true ? const SettingScreen() : const SubscriptionListScreen();
+            return Constant.isVerifyDocument == true
+                ? const SettingScreen()
+                : const SubscriptionListScreen();
           case 11:
-            return Constant.isVerifyDocument == true ? const SubscriptionListScreen() : const SubscriptionHistory();
+            return Constant.isVerifyDocument == true
+                ? const SubscriptionListScreen()
+                : const SubscriptionHistory();
           case 12:
             return Constant.isVerifyDocument == true
                 ? const SubscriptionHistory()
@@ -101,18 +108,23 @@ class DashBoardController extends GetxController {
             return const ProfileScreen();
           case 7:
             return const ReferralScreen();
+
           /// Check Here doucment Verification Screen
-            case 8:
-              // yahan change kea ha
+          case 8:
+            // yahan change kea ha
             if (Constant.isVerifyDocument == true) {
               return const OnlineRegistrationScreen();
             } else {
               return const VehicleInformationScreen();
             }
           case 9:
-            return Constant.isVerifyDocument == true ? const VehicleInformationScreen() : const SettingScreen();
+            return Constant.isVerifyDocument == true
+                ? const VehicleInformationScreen()
+                : const SettingScreen();
           case 10:
-            return Constant.isVerifyDocument == true ? const SettingScreen() : const SubscriptionHistory();
+            return Constant.isVerifyDocument == true
+                ? const SettingScreen()
+                : const SubscriptionHistory();
 
           case 11:
             return Constant.isVerifyDocument == true
@@ -171,6 +183,7 @@ class DashBoardController extends GetxController {
       if (Constant.isSubscriptionModelApplied == true) {
         if (Constant.isVerifyDocument == true ? index == 14 : index == 13) {
           await FirebaseAuth.instance.signOut();
+          await Preferences.clearKeyData('userId');
           Get.offAll(const LoginScreen());
         } else {
           selectedDrawerIndex.value = index;
@@ -178,6 +191,7 @@ class DashBoardController extends GetxController {
       } else {
         if (Constant.isVerifyDocument == true ? index == 13 : index == 12) {
           await FirebaseAuth.instance.signOut();
+          await Preferences.clearKeyData('userId');
           Get.offAll(const LoginScreen());
         } else {
           selectedDrawerIndex.value = index;
@@ -186,6 +200,7 @@ class DashBoardController extends GetxController {
     } else {
       if (index == 8) {
         await FirebaseAuth.instance.signOut();
+        await Preferences.clearKeyData('userId');
         Get.offAll(const LoginScreen());
       } else {
         selectedDrawerIndex.value = index;
@@ -209,11 +224,13 @@ class DashBoardController extends GetxController {
           DrawerItem('Inbox', "assets/icons/ic_inbox.svg"),
           DrawerItem('Profile', "assets/icons/ic_profile.svg"),
           DrawerItem('Referral a friends', "assets/icons/ic_referral.svg"),
-          if (Constant.isVerifyDocument == true) DrawerItem('Online Registration', "assets/icons/ic_document.svg"),
+          if (Constant.isVerifyDocument == true)
+            DrawerItem('Online Registration', "assets/icons/ic_document.svg"),
           DrawerItem('Vehicle Information', "assets/icons/ic_city.svg"),
           DrawerItem('Settings', "assets/icons/ic_settings.svg"),
           DrawerItem('Subscription', "assets/icons/ic_subscription.svg"),
-          DrawerItem('Subscription History', "assets/icons/ic_subscription_history.svg"),
+          DrawerItem('Subscription History',
+              "assets/icons/ic_subscription_history.svg"),
           DrawerItem('Help & Support', "assets/icons/ic_help_support.svg"),
           DrawerItem('Log out', "assets/icons/ic_logout.svg"),
         ];
@@ -229,10 +246,12 @@ class DashBoardController extends GetxController {
           DrawerItem('Inbox', "assets/icons/ic_inbox.svg"),
           DrawerItem('Profile', "assets/icons/ic_profile.svg"),
           DrawerItem('Referral a friends', "assets/icons/ic_referral.svg"),
-          if (Constant.isVerifyDocument == true) DrawerItem('Online Registration', "assets/icons/ic_document.svg"),
+          if (Constant.isVerifyDocument == true)
+            DrawerItem('Online Registration', "assets/icons/ic_document.svg"),
           DrawerItem('Vehicle Information', "assets/icons/ic_city.svg"),
           DrawerItem('Settings', "assets/icons/ic_settings.svg"),
-          DrawerItem('Subscription History', "assets/icons/ic_subscription_history.svg"),
+          DrawerItem('Subscription History',
+              "assets/icons/ic_subscription_history.svg"),
           DrawerItem('Help & Support', "assets/icons/ic_help_support.svg"),
           DrawerItem('Log out', "assets/icons/ic_logout.svg"),
         ];
@@ -264,7 +283,8 @@ class DashBoardController extends GetxController {
 
   Rx<DriverUserModel> driverUser = DriverUserModel().obs;
   Future<void> getDriver() async {
-    await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()).then((driver) {
+    await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid())
+        .then((driver) {
       if (driver?.id != null) {
         driverUser.value = driver!;
       }
@@ -280,7 +300,8 @@ class DashBoardController extends GetxController {
 
   Future<bool> onWillPop() {
     DateTime now = DateTime.now();
-    if (now.difference(currentBackPressTime.value) > const Duration(seconds: 2)) {
+    if (now.difference(currentBackPressTime.value) >
+        const Duration(seconds: 2)) {
       currentBackPressTime.value = now;
       ShowToastDialog.showToast(
         "Double press to exit",

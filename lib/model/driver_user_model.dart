@@ -33,6 +33,7 @@ class DriverUserModel {
   Timestamp? subscriptionExpiryDate;
   SubscriptionPlanModel? subscriptionPlan;
   String? ownerId;
+  String? password;
 
   DriverUserModel({
     this.isEnabled,
@@ -62,6 +63,7 @@ class DriverUserModel {
     this.subscriptionExpiryDate,
     this.subscriptionPlan,
     this.ownerId,
+    this.password,
   });
 
   DriverUserModel.fromJson(Map<String, dynamic> json) {
@@ -77,20 +79,29 @@ class DriverUserModel {
     serviceId = json['serviceId'];
     fcmToken = json['fcmToken'];
     email = json['email'];
-    vehicleInformation = json['vehicleInformation'] != null ? VehicleInformation.fromJson(json['vehicleInformation']) : null;
+    vehicleInformation = json['vehicleInformation'] != null
+        ? VehicleInformation.fromJson(json['vehicleInformation'])
+        : null;
     reviewsCount = json['reviewsCount'] ?? '0.0';
     reviewsSum = json['reviewsSum'] ?? '0.0';
     rotation = json['rotation'];
     walletAmount = json['walletAmount'] ?? "0.0";
-    location = json['location'] != null ? LocationLatLng.fromJson(json['location']) : null;
-    position = json['position'] != null ? Positions.fromJson(json['position']) : null;
+    location = json['location'] != null
+        ? LocationLatLng.fromJson(json['location'])
+        : null;
+    position = json['position'] != null
+        ? Positions.fromJson(json['position'])
+        : null;
     createdAt = json['createdAt'];
     zoneIds = json['zoneIds'];
     subscriptionTotalOrders = json['subscriptionTotalOrders'];
     subscriptionPlanId = json['subscriptionPlanId'];
     subscriptionExpiryDate = json['subscriptionExpiryDate'];
-    subscriptionPlan = json['subscription_plan'] != null ? SubscriptionPlanModel.fromJson(json['subscription_plan']) : null;
+    subscriptionPlan = json['subscription_plan'] != null
+        ? SubscriptionPlanModel.fromJson(json['subscription_plan'])
+        : null;
     ownerId = json['ownerId'];
+    password = json['password'];
     if (json['serviceName'] != null) {
       serviceName = <LanguageName>[];
       json['serviceName'].forEach((v) {
@@ -133,6 +144,7 @@ class DriverUserModel {
     data['subscriptionExpiryDate'] = subscriptionExpiryDate;
     data['subscription_plan'] = subscriptionPlan?.toJson();
     data['ownerId'] = ownerId;
+    data['password'] = password;
     if (serviceName != null) {
       data['serviceName'] = serviceName!.map((v) => v.toJson()).toList();
     }
@@ -198,7 +210,12 @@ class RateModel {
   String? perKmRate;
   String? zoneId;
 
-  RateModel({this.acPerKmRate, this.nonAcPerKmRate, this.perKmRate, this.zoneId});
+  RateModel({
+    this.acPerKmRate,
+    this.nonAcPerKmRate,
+    this.perKmRate,
+    this.zoneId,
+  });
 
   RateModel.fromJson(Map<String, dynamic> json) {
     acPerKmRate = json['acPerKmRate'];

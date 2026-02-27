@@ -53,8 +53,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
       init: VehicleInformationController(),
       builder: (controller) {
         return Scaffold(
-          backgroundColor:
-              isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+          backgroundColor: isDark
+              ? AppColors.darkBackground
+              : AppColors.moroccoBackground,
           body: Stack(
             children: [
               // Animated Moroccan background
@@ -79,9 +80,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                     _buildHeader(context, isDark),
                     Expanded(
                       child: controller.isLoading.value
-                          ? Center(
-                              child: Constant.loader(isDarkTheme: isDark),
-                            )
+                          ? Center(child: Constant.loader(isDarkTheme: isDark))
                           : SingleChildScrollView(
                               padding: const EdgeInsets.fromLTRB(20, 4, 20, 40),
                               child: Column(
@@ -101,44 +100,51 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   _buildStyledTextField(
                                     context,
                                     controller: controller
-                                        .vehicleNumberController.value,
+                                        .vehicleNumberController
+                                        .value,
                                     hintText: "e.g. ABC-1234".tr,
                                     isDark: isDark,
                                     enabled:
                                         controller.driverModel.value.ownerId ==
-                                            null,
+                                        null,
                                     prefixIcon: Icons.pin_rounded,
                                   ),
                                   const SizedBox(height: 14),
 
                                   // Registration Date
                                   _buildFieldLabel(
-                                      "Registration Date".tr, isDark),
+                                    "Registration Date".tr,
+                                    isDark,
+                                  ),
                                   const SizedBox(height: 6),
                                   InkWell(
                                     onTap: () async {
                                       if (controller
-                                              .driverModel.value.ownerId ==
+                                              .driverModel
+                                              .value
+                                              .ownerId ==
                                           null) {
-                                        await Constant.selectDate(context)
-                                            .then((value) {
-                                          if (value != null) {
-                                            controller.selectedDate.value =
-                                                value;
-                                            controller
-                                                    .registrationDateController
-                                                    .value
-                                                    .text =
-                                                DateFormat("dd-MM-yyyy")
-                                                    .format(value);
-                                          }
-                                        });
+                                        await Constant.selectDate(context).then(
+                                          (value) {
+                                            if (value != null) {
+                                              controller.selectedDate.value =
+                                                  value;
+                                              controller
+                                                  .registrationDateController
+                                                  .value
+                                                  .text = DateFormat(
+                                                "dd-MM-yyyy",
+                                              ).format(value);
+                                            }
+                                          },
+                                        );
                                       }
                                     },
                                     child: _buildStyledTextField(
                                       context,
                                       controller: controller
-                                          .registrationDateController.value,
+                                          .registrationDateController
+                                          .value,
                                       hintText: "dd-MM-yyyy".tr,
                                       isDark: isDark,
                                       enabled: false,
@@ -158,21 +164,23 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   AbsorbPointer(
                                     absorbing:
                                         controller.driverModel.value.ownerId !=
-                                            null,
+                                        null,
                                     child: _buildStyledDropdown<String>(
                                       context,
                                       isDark: isDark,
                                       value:
                                           controller.selectedColor.value.isEmpty
-                                              ? null
-                                              : controller.selectedColor.value,
+                                          ? null
+                                          : controller.selectedColor.value,
                                       hint: "Select vehicle color".tr,
                                       prefixIcon: Icons.palette_rounded,
                                       items: controller.carColorList
-                                          .map((item) => DropdownMenuItem(
-                                                value: item,
-                                                child: Text(item.toString()),
-                                              ))
+                                          .map(
+                                            (item) => DropdownMenuItem(
+                                              value: item,
+                                              child: Text(item.toString()),
+                                            ),
+                                          )
                                           .toList(),
                                       onChanged: (value) {
                                         controller.selectedColor.value = value!;
@@ -183,28 +191,38 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
 
                                   // Seats
                                   _buildFieldLabel(
-                                      "Number of Seats".tr, isDark),
+                                    "Number of Seats".tr,
+                                    isDark,
+                                  ),
                                   const SizedBox(height: 6),
                                   AbsorbPointer(
                                     absorbing:
                                         controller.driverModel.value.ownerId !=
-                                            null,
+                                        null,
                                     child: _buildStyledDropdown<String>(
                                       context,
                                       isDark: isDark,
-                                      value: controller.seatsController.value
-                                              .text.isEmpty
+                                      value:
+                                          controller
+                                              .seatsController
+                                              .value
+                                              .text
+                                              .isEmpty
                                           ? null
                                           : controller
-                                              .seatsController.value.text,
+                                                .seatsController
+                                                .value
+                                                .text,
                                       hint: "How Many Seats".tr,
                                       prefixIcon: Icons
                                           .airline_seat_recline_extra_rounded,
                                       items: controller.sheetList
-                                          .map((item) => DropdownMenuItem(
-                                                value: item,
-                                                child: Text(item.toString()),
-                                              ))
+                                          .map(
+                                            (item) => DropdownMenuItem(
+                                              value: item,
+                                              child: Text(item.toString()),
+                                            ),
+                                          )
                                           .toList(),
                                       onChanged: (value) {
                                         controller.seatsController.value.text =
@@ -220,11 +238,14 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   InkWell(
                                     onTap: () {
                                       if (controller
-                                              .driverModel.value.ownerId ==
+                                              .driverModel
+                                              .value
+                                              .ownerId ==
                                           null) {
                                         controller.selectedTempZone.clear();
-                                        controller.selectedTempZone
-                                            .addAll(controller.selectedZone);
+                                        controller.selectedTempZone.addAll(
+                                          controller.selectedZone,
+                                        );
                                         zoneDialog(context, controller);
                                       }
                                     },
@@ -247,7 +268,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   ),
 
                                   // Price Rates (zone-based tab view)
-                                  if (controller.selectedPrices.isNotEmpty) ...[
+                                  /* if (controller.selectedPrices.isNotEmpty) ...[
                                     const SizedBox(height: 14),
                                     _buildFieldLabel(
                                         "Rate Configuration".tr, isDark),
@@ -256,8 +277,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                       () => _buildRateTabCard(
                                           context, controller, isDark),
                                     ),
-                                  ],
-
+                                  ], */
                                   const SizedBox(height: 24),
 
                                   // ── Service Types ──────────────────────
@@ -276,7 +296,10 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                       scrollDirection: Axis.horizontal,
                                       shrinkWrap: true,
                                       padding: const EdgeInsets.only(
-                                          bottom: 12, top: 6, left: 12),
+                                        bottom: 12,
+                                        top: 6,
+                                        left: 12,
+                                      ),
                                       itemBuilder: (context, index) {
                                         ServiceModel serviceModel =
                                             controller.serviceList[index];
@@ -320,14 +343,21 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   ),
                                   const SizedBox(height: 8),
                                   _buildRulesCard(
-                                      context, controller, isDark, themeChange),
+                                    context,
+                                    controller,
+                                    isDark,
+                                    themeChange,
+                                  ),
 
                                   const SizedBox(height: 24),
 
                                   // ── Save Button ────────────────────────
                                   controller.driverModel.value.ownerId == null
                                       ? _buildSaveButton(
-                                          context, controller, isDark)
+                                          context,
+                                          controller,
+                                          isDark,
+                                        )
                                       : const SizedBox(height: 10),
 
                                   const SizedBox(height: 20),
@@ -517,18 +547,25 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
             color: isDark ? Colors.white38 : Colors.black38,
           ),
           prefixIcon: prefixIcon != null
-              ? Icon(prefixIcon,
-                  size: 18, color: isDark ? Colors.white38 : Colors.black38)
+              ? Icon(
+                  prefixIcon,
+                  size: 18,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                )
               : null,
           suffixIcon: suffixIcon,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide:
-                const BorderSide(color: AppColors.moroccoRed, width: 1.5),
+            borderSide: const BorderSide(
+              color: AppColors.moroccoRed,
+              width: 1.5,
+            ),
           ),
           disabledBorder: InputBorder.none,
         ),
@@ -565,18 +602,25 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
       child: DropdownButtonFormField<T>(
         menuMaxHeight: 300,
         decoration: InputDecoration(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 14,
+          ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide:
-                const BorderSide(color: AppColors.moroccoRed, width: 1.5),
+            borderSide: const BorderSide(
+              color: AppColors.moroccoRed,
+              width: 1.5,
+            ),
           ),
           prefixIcon: prefixIcon != null
-              ? Icon(prefixIcon,
-                  size: 18, color: isDark ? Colors.white38 : Colors.black38)
+              ? Icon(
+                  prefixIcon,
+                  size: 18,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                )
               : null,
         ),
         dropdownColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
@@ -595,16 +639,21 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
         validator: (v) => v == null ? 'field required' : null,
         onChanged: onChanged,
         items: items,
-        icon: Icon(Icons.keyboard_arrow_down_rounded,
-            color: isDark ? Colors.white38 : Colors.black38),
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: isDark ? Colors.white38 : Colors.black38,
+        ),
       ),
     );
   }
 
   // ─── Rate Tab Card ─────────────────────────────────────────────────────────
 
-  Widget _buildRateTabCard(BuildContext context,
-      VehicleInformationController controller, bool isDark) {
+  Widget _buildRateTabCard(
+    BuildContext context,
+    VehicleInformationController controller,
+    bool isDark,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
@@ -628,14 +677,15 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
           children: [
             // Tab bar
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               child: TabBar(
                 onTap: (value) {
                   controller.tabBarheight.value =
                       controller.selectedPrices[value].isAcNonAc == true
-                          ? 200
-                          : 100;
+                      ? 200
+                      : 100;
                   controller.update();
                 },
                 indicatorColor: AppColors.moroccoRed,
@@ -646,7 +696,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 labelColor: AppColors.moroccoRed,
                 unselectedLabelColor: isDark ? Colors.white38 : Colors.black38,
                 labelStyle: GoogleFonts.outfit(
-                    fontSize: 13, fontWeight: FontWeight.w600),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
                 unselectedLabelStyle: GoogleFonts.outfit(fontSize: 13),
                 tabs: controller.selectedPrices.map((price) {
                   final zoneName = Constant.localizationName(
@@ -661,10 +713,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 }).toList(),
               ),
             ),
-            Divider(
-              height: 1,
-              color: AppColors.moroccoRed.withOpacity(0.15),
-            ),
+            Divider(height: 1, color: AppColors.moroccoRed.withOpacity(0.15)),
             SizedBox(
               height: controller.tabBarheight.value,
               child: TabBarView(
@@ -674,7 +723,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                   if (price.isAcNonAc == true) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -682,7 +733,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                             Text(
                               "A/C Per ${Constant.distanceType} Rate",
                               style: GoogleFonts.outfit(
-                                  fontWeight: FontWeight.w600, fontSize: 13),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             _buildRateField(
@@ -695,13 +748,15 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   controller.driverModel.value.ownerId == null,
                               symbol:
                                   Constant.currencyModel?.symbol.toString() ??
-                                      'MAD',
+                                  'MAD',
                             ),
                             const SizedBox(height: 14),
                             Text(
                               "Non A/C Per ${Constant.distanceType} Rate",
                               style: GoogleFonts.outfit(
-                                  fontWeight: FontWeight.w600, fontSize: 13),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             _buildRateField(
@@ -715,7 +770,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   controller.driverModel.value.ownerId == null,
                               symbol:
                                   Constant.currencyModel?.symbol.toString() ??
-                                      'MAD',
+                                  'MAD',
                             ),
                           ],
                         ),
@@ -724,7 +779,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                   } else {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -732,7 +789,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                             Text(
                               "Per ${Constant.distanceType} Rate",
                               style: GoogleFonts.outfit(
-                                  fontWeight: FontWeight.w600, fontSize: 13),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             _buildRateField(
@@ -745,7 +804,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   controller.driverModel.value.ownerId == null,
                               symbol:
                                   Constant.currencyModel?.symbol.toString() ??
-                                      'MAD',
+                                  'MAD',
                             ),
                           ],
                         ),
@@ -783,8 +842,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             decoration: BoxDecoration(
               color: AppColors.moroccoRed.withOpacity(0.1),
-              borderRadius:
-                  const BorderRadius.horizontal(left: Radius.circular(12)),
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(12),
+              ),
             ),
             child: Text(
               symbol,
@@ -799,8 +859,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
             child: TextField(
               controller: controller,
               enabled: enabled,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               style: GoogleFonts.outfit(
                 fontSize: 15,
                 color: isDark ? Colors.white : Colors.black87,
@@ -811,8 +872,10 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                   fontSize: 13,
                   color: isDark ? Colors.white38 : Colors.black38,
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
+                ),
                 border: InputBorder.none,
               ),
             ),
@@ -949,13 +1012,14 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                       imageUrl: serviceModel.image.toString(),
                                       fit: BoxFit.contain,
                                       placeholder: (context, url) => Center(
-                                        child:
-                                            Constant.loader(isDarkTheme: true),
+                                        child: Constant.loader(
+                                          isDarkTheme: true,
+                                        ),
                                       ),
                                       errorWidget: (context, url, error) =>
                                           Image.network(
-                                        'https://firebasestorage.googleapis.com/v0/b/goride-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115',
-                                      ),
+                                            'https://firebasestorage.googleapis.com/v0/b/goride-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115',
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -967,8 +1031,12 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                           Expanded(
                             flex: 40,
                             child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(14, 10, 14, 12),
+                              padding: const EdgeInsets.fromLTRB(
+                                14,
+                                10,
+                                14,
+                                12,
+                              ),
                               color: isDark
                                   ? const Color(0xFF1C1C1C)
                                   : Colors.white,
@@ -978,7 +1046,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                 children: [
                                   Text(
                                     Constant.localizationTitle(
-                                        serviceModel.title),
+                                      serviceModel.title,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.outfit(
@@ -1050,13 +1119,12 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                     right: 10,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            AppColors.moroccoGreen,
-                            Color(0xFF2A9D5C),
-                          ],
+                          colors: [AppColors.moroccoGreen, Color(0xFF2A9D5C)],
                         ),
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
@@ -1139,8 +1207,10 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 (item) => CheckboxListTile(
                   checkColor: Colors.white,
                   activeColor: AppColors.moroccoGreen,
-                  value: controller.selectedDriverRulesList
-                              .indexWhere((element) => element.id == item.id) ==
+                  value:
+                      controller.selectedDriverRulesList.indexWhere(
+                            (element) => element.id == item.id,
+                          ) ==
                           -1
                       ? false
                       : true,
@@ -1157,9 +1227,11 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                     if (value == true) {
                       controller.selectedDriverRulesList.add(item);
                     } else {
-                      controller.selectedDriverRulesList.removeAt(controller
-                          .selectedDriverRulesList
-                          .indexWhere((element) => element.id == item.id));
+                      controller.selectedDriverRulesList.removeAt(
+                        controller.selectedDriverRulesList.indexWhere(
+                          (element) => element.id == item.id,
+                        ),
+                      );
                     }
                   },
                 ),
@@ -1172,8 +1244,11 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
 
   // ─── Save Button ───────────────────────────────────────────────────────────
 
-  Widget _buildSaveButton(BuildContext context,
-      VehicleInformationController controller, bool isDark) {
+  Widget _buildSaveButton(
+    BuildContext context,
+    VehicleInformationController controller,
+    bool isDark,
+  ) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -1198,11 +1273,14 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
           } else if (controller.selectedZone.isEmpty) {
             ShowToastDialog.showToast("Please select Zone".tr);
           } else {
-            for (int index = 0;
-                index < controller.selectedPrices.length;
-                index++) {
+            /*for (
+              int index = 0;
+              index < controller.selectedPrices.length;
+              index++
+            ) {
               ZoneModel zoneModel = await FireStoreUtils.getZoneById(
-                  zoneId: controller.selectedPrices[index].zoneId!);
+                zoneId: controller.selectedPrices[index].zoneId!,
+              );
               if (controller.selectedPrices[index].isAcNonAc == true) {
                 if (controller.acPerKmRate[index].text.isEmpty) {
                   ShowToastDialog.showToast(
@@ -1211,7 +1289,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                   );
                   return;
                 } else if (double.parse(
-                        controller.selectedPrices[index].acCharge.toString()) <
+                      controller.selectedPrices[index].acCharge.toString(),
+                    ) <
                     double.parse(controller.acPerKmRate[index].text)) {
                   ShowToastDialog.showToast(
                     "${"Maximum allowed value is".tr} ${controller.selectedPrices[index].acCharge.toString()} ${"Please enter a lower A/c value for".tr} ${Constant.localizationName(zoneModel.name)} ${'Zone'.tr}."
@@ -1224,9 +1303,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                         .tr,
                   );
                   return;
-                } else if (double.parse(controller
-                        .selectedPrices[index].nonAcCharge
-                        .toString()) <
+                } else if (double.parse(
+                      controller.selectedPrices[index].nonAcCharge.toString(),
+                    ) <
                     double.parse(controller.nonAcPerKmRate[index].text)) {
                   ShowToastDialog.showToast(
                     "${"Maximum allowed value is".tr} ${controller.selectedPrices[index].nonAcCharge.toString()} ${"Please enter a lower Non A/c value for".tr} ${Constant.localizationName(zoneModel.name)} ${'Zone'.tr}."
@@ -1236,7 +1315,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 }
               } else if (controller.selectedPrices[index].isAcNonAc == false) {
                 ZoneModel zoneData = await FireStoreUtils.getZoneById(
-                    zoneId: controller.selectedPrices[index].zoneId!);
+                  zoneId: controller.selectedPrices[index].zoneId!,
+                );
                 if (controller.acNonAcWithoutPerKmRate[index].text.isEmpty) {
                   ShowToastDialog.showToast(
                     "${"Please enter Per".tr} ${Constant.distanceType} ${"Rate for".tr} ${Constant.localizationName(zoneData.name)} ${'Zone'.tr}."
@@ -1244,9 +1324,11 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                   );
                   return;
                 } else if (double.parse(
-                        controller.selectedPrices[index].kmCharge.toString()) <
+                      controller.selectedPrices[index].kmCharge.toString(),
+                    ) <
                     double.parse(
-                        controller.acNonAcWithoutPerKmRate[index].text)) {
+                      controller.acNonAcWithoutPerKmRate[index].text,
+                    )) {
                   ShowToastDialog.showToast(
                     "${"Maximum allowed value is".tr} ${controller.selectedPrices[index].kmCharge.toString()} ${"Please enter a lower price for".tr} ${Constant.localizationName(zoneData.name)} ${'Zone'.tr}."
                         .tr,
@@ -1254,7 +1336,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                   return;
                 }
               }
-            }
+            }*/
             controller.saveDetails();
           }
         },
@@ -1289,7 +1371,9 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
   // ─── Zone Dialog ───────────────────────────────────────────────────────────
 
   void zoneDialog(
-      BuildContext context, VehicleInformationController controller) {
+    BuildContext context,
+    VehicleInformationController controller,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1307,21 +1391,28 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                       itemBuilder: (BuildContext context, int index) {
                         return Obx(
                           () => CheckboxListTile(
-                            value: controller.selectedTempZone
-                                .contains(controller.zoneList[index].id),
+                            value: controller.selectedTempZone.contains(
+                              controller.zoneList[index].id,
+                            ),
                             onChanged: (value) {
-                              if (controller.selectedTempZone
-                                  .contains(controller.zoneList[index].id)) {
+                              if (controller.selectedTempZone.contains(
+                                controller.zoneList[index].id,
+                              )) {
                                 controller.selectedTempZone.remove(
-                                    controller.zoneList[index].id); // unselect
+                                  controller.zoneList[index].id,
+                                ); // unselect
                               } else {
                                 controller.selectedTempZone.add(
-                                    controller.zoneList[index].id); // select
+                                  controller.zoneList[index].id,
+                                ); // select
                               }
                             },
                             activeColor: AppColors.lightprimary,
-                            title: Text(Constant.localizationName(
-                                controller.zoneList[index].name)),
+                            title: Text(
+                              Constant.localizationName(
+                                controller.zoneList[index].name,
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -1330,10 +1421,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
           ),
           actions: [
             TextButton(
-              child: Text(
-                "Cancel".tr,
-                style: const TextStyle(),
-              ),
+              child: Text("Cancel".tr, style: const TextStyle()),
               onPressed: () {
                 controller.selectedTempZone.value = controller.selectedZone;
                 Get.back();
@@ -1347,23 +1435,29 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 if (controller.selectedTempZone.isEmpty) {
                   ShowToastDialog.showToast("Please select zone".tr);
                 } else {
-                  controller.selectedPrices.value = controller
-                          .selectedServiceType.value.prices
-                          ?.where((price) =>
-                              controller.selectedZone.contains(price.zoneId))
+                  controller.selectedPrices.value =
+                      controller.selectedServiceType.value.prices
+                          ?.where(
+                            (price) =>
+                                controller.selectedZone.contains(price.zoneId),
+                          )
                           .toList() ??
                       <Price>[];
                   controller.acPerKmRate.value = List.generate(
-                      controller.selectedPrices.length,
-                      (index) => TextEditingController());
+                    controller.selectedPrices.length,
+                    (index) => TextEditingController(),
+                  );
                   controller.nonAcPerKmRate.value = List.generate(
-                      controller.selectedPrices.length,
-                      (index) => TextEditingController());
+                    controller.selectedPrices.length,
+                    (index) => TextEditingController(),
+                  );
                   controller.acNonAcWithoutPerKmRate.value = List.generate(
-                      controller.selectedPrices.length,
-                      (index) => TextEditingController());
-                  final hasAcNonAc =
-                      controller.selectedPrices.any((e) => e.isAcNonAc == true);
+                    controller.selectedPrices.length,
+                    (index) => TextEditingController(),
+                  );
+                  final hasAcNonAc = controller.selectedPrices.any(
+                    (e) => e.isAcNonAc == true,
+                  );
                   controller.tabBarheight.value = hasAcNonAc ? 200 : 100;
                   String nameValue = "";
                   for (var element in controller.selectedZone) {
@@ -1450,12 +1544,16 @@ class _MoroccanPainter extends CustomPainter {
     const double patternSize = 140.0;
     final double offset = scrollOffset * patternSize;
 
-    for (double x = -patternSize;
-        x < size.width + patternSize;
-        x += patternSize) {
-      for (double y = -patternSize;
-          y < size.height + patternSize;
-          y += patternSize) {
+    for (
+      double x = -patternSize;
+      x < size.width + patternSize;
+      x += patternSize
+    ) {
+      for (
+        double y = -patternSize;
+        y < size.height + patternSize;
+        y += patternSize
+      ) {
         bool isEvenRow = (y / patternSize).round().isEven;
         bool isEvenCol = (x / patternSize).round().isEven;
         Paint activePaint = (isEvenRow ^ isEvenCol) ? paintRed : paintGreen;
@@ -1470,7 +1568,11 @@ class _MoroccanPainter extends CustomPainter {
   }
 
   void _drawEightPointStar(
-      Canvas canvas, Offset center, double radius, Paint paint) {
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Paint paint,
+  ) {
     final path = Path();
     const int points = 8;
     final double innerRadius = radius * 0.45;

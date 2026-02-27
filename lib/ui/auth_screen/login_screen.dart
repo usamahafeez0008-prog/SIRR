@@ -10,10 +10,12 @@ import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/ui/auth_screen/information_screen.dart';
 import 'package:driver/ui/dashboard_screen.dart';
+import 'package:driver/ui/auth_screen/login_with_password_screen.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
 import 'package:driver/ui/terms_and_condition/terms_and_condition_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
+import 'package:driver/utils/Preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen>
                           // Logo Section
                           _buildModernLogo(),
 
-                          const SizedBox(height: 28),
+                          const SizedBox(height: 14),
 
                           ShaderMask(
                             shaderCallback: (bounds) => const LinearGradient(
@@ -118,13 +120,10 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ),
 
-                          const SizedBox(height: 40),
-
+                          const SizedBox(height: 20),
                           // 3. Clean Card (Light Glassmversion)
                           _buildGlassCard(context, !isDark, controller),
-
                           const SizedBox(height: 32),
-
                           // Terms & Privacy
                           _buildModernTerms(isDark),
                         ],
@@ -185,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Phone Login".tr,
+            "Register with phone".tr,
             style: GoogleFonts.outfit(
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -196,10 +195,34 @@ class _LoginScreenState extends State<LoginScreen>
           _buildModernTextField(controller, isDark),
           const SizedBox(height: 24),
           _buildPrimaryButton(controller),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: () {
+              Get.to(() => const LoginWithPasswordScreen());
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Container(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  textAlign: TextAlign.right,
+                  "Already Have An Account! Login".tr,
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.moroccoGreen,
+                    //decoration: TextDecoration.underline,
+                    decorationColor: AppColors.moroccoRed,
+                  ),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 32),
           _buildDivider(isDark),
           const SizedBox(height: 32),
           _buildSocialLoginRow(controller, isDark),
+
         ],
       ),
     );
@@ -261,13 +284,13 @@ class _LoginScreenState extends State<LoginScreen>
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.moroccoGreen.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: AppColors.moroccoGreen.withOpacity(0.3),
+        //     blurRadius: 15,
+        //     offset: const Offset(0, 8),
+        //   ),
+        // ],
       ),
       child: ElevatedButton(
         onPressed: () => controller.sendCode(),
@@ -297,7 +320,7 @@ class _LoginScreenState extends State<LoginScreen>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            "Quick Login".tr,
+            "Continue with".tr,
             style: GoogleFonts.outfit(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -413,9 +436,8 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         children: [
           TextSpan(
-            recognizer: TapGestureRecognizer()
-              ..onTap = (){},
-                  // () => Get.to(const TermsAndConditionScreen(type: "terms")),
+            recognizer: TapGestureRecognizer()..onTap = () {},
+            // () => Get.to(const TermsAndConditionScreen(type: "terms")),
 
             text: 'Terms'.tr,
             style: const TextStyle(
@@ -423,9 +445,8 @@ class _LoginScreenState extends State<LoginScreen>
           ),
           const TextSpan(text: ' & '),
           TextSpan(
-            recognizer: TapGestureRecognizer()
-              ..onTap = (){},
-                  //() => Get.to(const TermsAndConditionScreen(type: "privacy")),
+            recognizer: TapGestureRecognizer()..onTap = () {},
+            //() => Get.to(const TermsAndConditionScreen(type: "privacy")),
             text: 'Privacy'.tr,
             style: const TextStyle(
                 fontWeight: FontWeight.bold, color: AppColors.moroccoGreen),
@@ -476,6 +497,7 @@ class _LoginScreenState extends State<LoginScreen>
           _handleOldUserLogin(userCredential!.user!.uid);
         } else {
           await FirebaseAuth.instance.signOut();
+          await Preferences.clearKeyData('userId');
           ShowToastDialog.showToast('Account conflict.'.tr);
         }
       });

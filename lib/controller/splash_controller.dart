@@ -30,8 +30,7 @@ class SplashController extends GetxController {
       } else {*/
       bool isLogin = await FireStoreUtils.isLogin();
       if (isLogin == true) {
-        await FireStoreUtils.getDriverProfile(
-                FirebaseAuth.instance.currentUser!.uid)
+        await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid())
             .then(
           (value) async {
             if (value != null) {
@@ -65,6 +64,7 @@ class SplashController extends GetxController {
               } else {
                 if (userModel.ownerId != null && userModel.isEnabled == false) {
                   await FirebaseAuth.instance.signOut();
+                  await Preferences.clearKeyData('userId');
                   ShowToastDialog.showToast(
                       'This account has been disabled. Please reach out to the owner'
                           .tr);

@@ -12,6 +12,7 @@ import 'package:driver/ui/dashboard_screen.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
+import 'package:driver/utils/Preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -322,6 +323,7 @@ class _OtpScreenState extends State<OtpScreen>
                           if (userModel.ownerId != null &&
                               userModel.isEnabled == false) {
                             await FirebaseAuth.instance.signOut();
+                            await Preferences.clearKeyData('userId');
                             Get.back();
                             ShowToastDialog.showToast(
                                 'This account has been disabled. Please reach out to the owner'
@@ -334,6 +336,7 @@ class _OtpScreenState extends State<OtpScreen>
                     });
                   } else {
                     await FirebaseAuth.instance.signOut();
+                    await Preferences.clearKeyData('userId');
                     ShowToastDialog.showToast(
                         'This mobile number is already registered with a different role.'
                             .tr);

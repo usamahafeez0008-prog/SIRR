@@ -39,7 +39,7 @@ class DashBoardScreen extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: IconButton(
-                    onPressed: () => {}, //Scaffold.of(context).openDrawer(),
+                    onPressed: () =>  Scaffold.of(context).openDrawer(),
                     icon: SvgPicture.asset(
                       'assets/icons/ic_humber.svg',
                       color: Colors.white,

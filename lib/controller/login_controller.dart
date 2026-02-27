@@ -165,10 +165,5 @@ class LoginController extends GetxController {
 //   Geolocator.getCurrentPosition().then((value){
 //     print("location-->${value}");
 //   });
-//   await location.getLocation().then((value) {
-//     print("location-->");
-//     Constant.currentLocation = value;
-//     update();
-//   });
 // }
 }

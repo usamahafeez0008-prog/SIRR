@@ -15,6 +15,8 @@ class InformationController extends GetxController {
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
   Rx<TextEditingController> referralCodeController =
       TextEditingController().obs;
+  Rx<TextEditingController> passwordController = TextEditingController().obs;
+  RxBool isPasswordVisible = false.obs;
   RxString countryCode = "+1".obs;
   RxString loginType = "".obs;
 
@@ -46,8 +48,8 @@ class InformationController extends GetxController {
       userModel.value = argumentData['userModel'];
       loginType.value = userModel.value.loginType.toString();
       if (loginType.value == Constant.phoneLoginType) {
-        phoneNumberController.value.text =
-            userModel.value.phoneNumber.toString();
+        phoneNumberController.value.text = userModel.value.phoneNumber
+            .toString();
         countryCode.value = userModel.value.countryCode.toString();
       } else {
         emailController.value.text = userModel.value.email ?? '';

@@ -55,86 +55,87 @@ class _InformationScreenState extends State<InformationScreen>
     final bool isDark = themeChange.getThem();
 
     return GetX<InformationController>(
-        init: InformationController(),
-        builder: (controller) {
-          return Scaffold(
-            backgroundColor: !isDark
-                ? AppColors.darkBackground
-                : AppColors.moroccoBackground,
-            body: Stack(
-              children: [
-                // // 1. Immersive Animated Background
-                // Positioned.fill(
-                //   child: AnimatedBuilder(
-                //     animation: _backgroundController,
-                //     builder: (context, child) {
-                //       return CustomPaint(
-                //         painter: ModernMoroccanPainter(
-                //           scrollOffset: _backgroundController.value,
-                //           isDark: !isDark,
-                //         ),
-                //       );
-                //     },
-                //   ),
-                // ),
+      init: InformationController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: !isDark
+              ? AppColors.darkBackground
+              : AppColors.moroccoBackground,
+          body: Stack(
+            children: [
+              // // 1. Immersive Animated Background
+              // Positioned.fill(
+              //   child: AnimatedBuilder(
+              //     animation: _backgroundController,
+              //     builder: (context, child) {
+              //       return CustomPaint(
+              //         painter: ModernMoroccanPainter(
+              //           scrollOffset: _backgroundController.value,
+              //           isDark: !isDark,
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
 
-                // 2. Main Content
-                SafeArea(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 30),
+              // 2. Main Content
+              SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 30),
 
-                          // Logo Section
-                          _buildModernLogo(),
+                        // Logo Section
+                        _buildModernLogo(),
 
-                          const SizedBox(height: 14),
+                        const SizedBox(height: 14),
 
-                          ShaderMask(
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [
-                                AppColors.moroccoRed,
-                                AppColors.moroccoGreen
-                              ],
-                            ).createShader(bounds),
-                            child: Text(
-                              "Sign up".tr,
-                              style: GoogleFonts.outfit(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: -0.5,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Create your account to start using SIIR".tr,
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              AppColors.moroccoRed,
+                              AppColors.moroccoGreen,
+                            ],
+                          ).createShader(bounds),
+                          child: Text(
+                            "Sign up".tr,
                             style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: !isDark ? Colors.white60 : Colors.black45,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
+                              color: Colors.white,
                             ),
                           ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Create your account to start using SIIR".tr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: !isDark ? Colors.white60 : Colors.black45,
+                          ),
+                        ),
 
-                          const SizedBox(height: 40),
+                        const SizedBox(height: 40),
 
-                          // 3. Form Card
-                          _buildGlassCard(context, !isDark, controller),
+                        // 3. Form Card
+                        _buildGlassCard(context, !isDark, controller),
 
-                          const SizedBox(height: 40),
-                        ],
-                      ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildModernLogo() {
@@ -145,10 +146,7 @@ class _InformationScreenState extends State<InformationScreen>
       builder: (context, value, child) {
         return Opacity(
           opacity: value.clamp(0.0, 1.0),
-          child: Transform.scale(
-            scale: 0.8 + (0.2 * value),
-            child: child,
-          ),
+          child: Transform.scale(scale: 0.8 + (0.2 * value), child: child),
         );
       },
       child: Center(
@@ -162,15 +160,19 @@ class _InformationScreenState extends State<InformationScreen>
   }
 
   Widget _buildGlassCard(
-      BuildContext context, bool isDark, InformationController controller) {
+    BuildContext context,
+    bool isDark,
+    InformationController controller,
+  ) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
-          color:
-              isDark ? Colors.white12 : AppColors.moroccoGreen.withOpacity(0.5),
+          color: isDark
+              ? Colors.white12
+              : AppColors.moroccoGreen.withOpacity(0.5),
           width: 1,
         ),
         boxShadow: [
@@ -191,7 +193,7 @@ class _InformationScreenState extends State<InformationScreen>
             controller: controller.firstNameController.value,
             isDark: isDark,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           _buildTextField(
             hintText: 'Last name'.tr,
             controller: controller.lastNameController.value,
@@ -206,6 +208,27 @@ class _InformationScreenState extends State<InformationScreen>
             controller: controller.emailController.value,
             isDark: isDark,
             enable: controller.loginType.value != Constant.googleLoginType,
+          ),
+          const SizedBox(height: 16),
+          Obx(
+            () => _buildTextField(
+              hintText: 'Password'.tr,
+              controller: controller.passwordController.value,
+              isDark: isDark,
+              obscureText: !controller.isPasswordVisible.value,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  controller.isPasswordVisible.value
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                  color: isDark ? Colors.white30 : Colors.black26,
+                ),
+                onPressed: () {
+                  controller.isPasswordVisible.value =
+                      !controller.isPasswordVisible.value;
+                },
+              ),
+            ),
           ),
           // const SizedBox(height: 16),
           // _buildTextField(
@@ -225,30 +248,37 @@ class _InformationScreenState extends State<InformationScreen>
     required TextEditingController controller,
     required bool isDark,
     bool enable = true,
+    bool obscureText = false,
+    Widget? suffixIcon,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color:
-              isDark ? Colors.white10 : AppColors.moroccoGreen.withOpacity(0.2),
+          color: isDark
+              ? Colors.white10
+              : AppColors.moroccoGreen.withOpacity(0.2),
         ),
       ),
       child: TextFormField(
         controller: controller,
         enabled: enable,
+        obscureText: obscureText,
         style: GoogleFonts.outfit(
           color: isDark ? Colors.white : Colors.black87,
         ),
         decoration: InputDecoration(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 18,
+          ),
           border: InputBorder.none,
           hintText: hintText,
           hintStyle: GoogleFonts.outfit(
             color: isDark ? Colors.white30 : Colors.black26,
           ),
+          suffixIcon: suffixIcon,
         ),
       ),
     );
@@ -260,8 +290,9 @@ class _InformationScreenState extends State<InformationScreen>
         color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color:
-              isDark ? Colors.white10 : AppColors.moroccoGreen.withOpacity(0.2),
+          color: isDark
+              ? Colors.white10
+              : AppColors.moroccoGreen.withOpacity(0.2),
         ),
       ),
       child: TextFormField(
@@ -277,16 +308,18 @@ class _InformationScreenState extends State<InformationScreen>
             onChanged: (value) {
               controller.countryCode.value = value.dialCode.toString();
             },
-            dialogBackgroundColor:
-                !isDark ? AppColors.moroccoGreen : AppColors.background,
+            dialogBackgroundColor: !isDark
+                ? AppColors.moroccoGreen
+                : AppColors.background,
             initialSelection: controller.countryCode.value,
             textStyle: GoogleFonts.outfit(
               color: isDark ? Colors.white70 : Colors.black87,
               fontWeight: FontWeight.w600,
             ),
             showFlagMain: true,
-            flagDecoration:
-                BoxDecoration(borderRadius: BorderRadius.circular(4)),
+            flagDecoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
           border: InputBorder.none,
           hintText: "Phone number".tr,
@@ -328,23 +361,29 @@ class _InformationScreenState extends State<InformationScreen>
             ShowToastDialog.showToast("Please enter email".tr);
           } else if (controller.phoneNumberController.value.text.isEmpty) {
             ShowToastDialog.showToast("Please enter phone number".tr);
+          } else if (controller.passwordController.value.text.isEmpty) {
+            ShowToastDialog.showToast("Please enter password".tr);
           } else if (Constant.validateEmail(
-                  controller.emailController.value.text) ==
+                controller.emailController.value.text,
+              ) ==
               false) {
             ShowToastDialog.showToast("Please enter valid email".tr);
           } else {
             if (controller.referralCodeController.value.text.isNotEmpty) {
               FireStoreUtils.checkReferralCodeValidOrNot(
-                      controller.referralCodeController.value.text)
-                  .then((value) async {
+                controller.referralCodeController.value.text,
+              ).then((value) async {
                 if (value == true) {
                   ShowToastDialog.showLoader("Please wait".tr);
                   DriverUserModel userModel = controller.userModel.value;
-                  userModel.fullName =controller.firstNameController.value.text + controller.lastNameController.value.text;
+                  userModel.fullName =
+                      controller.firstNameController.value.text +
+                      controller.lastNameController.value.text;
                   userModel.email = controller.emailController.value.text;
                   userModel.countryCode = controller.countryCode.value;
                   userModel.phoneNumber =
                       controller.phoneNumberController.value.text;
+                  userModel.password = controller.passwordController.value.text;
                   userModel.documentVerification = false;
                   userModel.isOnline = false;
                   userModel.isEnabled = true;
@@ -355,17 +394,17 @@ class _InformationScreenState extends State<InformationScreen>
                   if (controller.profileImage.value.isNotEmpty) {
                     userModel.profilePic =
                         await Constant.uploadUserImageToFireStorage(
-                            File(controller.profileImage.value),
-                            "profileImage/${FireStoreUtils.getCurrentUid()}",
-                            File(controller.profileImage.value)
-                                .path
-                                .split('/')
-                                .last);
+                          File(controller.profileImage.value),
+                          "profileImage/${FireStoreUtils.getCurrentUid()}",
+                          File(
+                            controller.profileImage.value,
+                          ).path.split('/').last,
+                        );
                   }
 
                   await FireStoreUtils.getReferralUserByCode(
-                          controller.referralCodeController.value.text)
-                      .then((value) async {
+                    controller.referralCodeController.value.text,
+                  ).then((value) async {
                     if (value != null) {
                       ReferralModel ownReferralModel = ReferralModel(
                         id: FireStoreUtils.getCurrentUid(),
@@ -375,14 +414,16 @@ class _InformationScreenState extends State<InformationScreen>
                       await FireStoreUtils.referralAdd(ownReferralModel);
                     } else {
                       ReferralModel referralModel = ReferralModel(
-                          id: FireStoreUtils.getCurrentUid(),
-                          referralBy: "",
-                          referralCode: Constant.getReferralCode());
+                        id: FireStoreUtils.getCurrentUid(),
+                        referralBy: "",
+                        referralCode: Constant.getReferralCode(),
+                      );
                       await FireStoreUtils.referralAdd(referralModel);
                     }
                   });
-                  await FireStoreUtils.updateDriverUser(userModel)
-                      .then((value) {
+                  await FireStoreUtils.updateDriverUser(userModel).then((
+                    value,
+                  ) {
                     ShowToastDialog.closeLoader();
                     if (value == true) {
                       bool isPlanExpire = false;
@@ -394,8 +435,9 @@ class _InformationScreenState extends State<InformationScreen>
                             isPlanExpire = true;
                           }
                         } else {
-                          DateTime expiryDate =
-                              userModel.subscriptionExpiryDate!.toDate();
+                          DateTime expiryDate = userModel
+                              .subscriptionExpiryDate!
+                              .toDate();
                           isPlanExpire = expiryDate.isBefore(DateTime.now());
                         }
                       } else {
@@ -408,8 +450,10 @@ class _InformationScreenState extends State<InformationScreen>
                             Constant.isSubscriptionModelApplied == false) {
                           Get.offAll(const DashBoardScreen());
                         } else {
-                          Get.offAll(const SubscriptionListScreen(),
-                              arguments: {"isShow": true});
+                          Get.offAll(
+                            const SubscriptionListScreen(),
+                            arguments: {"isShow": true},
+                          );
                         }
                       } else {
                         Get.offAll(const DashBoardScreen());
@@ -423,11 +467,14 @@ class _InformationScreenState extends State<InformationScreen>
             } else {
               ShowToastDialog.showLoader("Please wait".tr);
               DriverUserModel userModel = controller.userModel.value;
-              userModel.fullName = controller.firstNameController.value.text + controller.lastNameController.value.text;
+              userModel.fullName =
+                  controller.firstNameController.value.text +
+                  controller.lastNameController.value.text;
               userModel.email = controller.emailController.value.text;
               userModel.countryCode = controller.countryCode.value;
               userModel.phoneNumber =
                   controller.phoneNumberController.value.text;
+              userModel.password = controller.passwordController.value.text;
               userModel.documentVerification = false;
               userModel.isOnline = false;
               userModel.isEnabled = true;
@@ -438,12 +485,10 @@ class _InformationScreenState extends State<InformationScreen>
               if (controller.profileImage.value.isNotEmpty) {
                 userModel.profilePic =
                     await Constant.uploadUserImageToFireStorage(
-                        File(controller.profileImage.value),
-                        "profileImage/${FireStoreUtils.getCurrentUid()}",
-                        File(controller.profileImage.value)
-                            .path
-                            .split('/')
-                            .last);
+                      File(controller.profileImage.value),
+                      "profileImage/${FireStoreUtils.getCurrentUid()}",
+                      File(controller.profileImage.value).path.split('/').last,
+                    );
               }
 
               ReferralModel referralModel = ReferralModel(
@@ -465,8 +510,8 @@ class _InformationScreenState extends State<InformationScreen>
                         isPlanExpire = true;
                       }
                     } else {
-                      DateTime expiryDate =
-                          userModel.subscriptionExpiryDate!.toDate();
+                      DateTime expiryDate = userModel.subscriptionExpiryDate!
+                          .toDate();
                       isPlanExpire = expiryDate.isBefore(DateTime.now());
                     }
                   } else {
@@ -479,8 +524,10 @@ class _InformationScreenState extends State<InformationScreen>
                         Constant.isSubscriptionModelApplied == false) {
                       Get.offAll(const DashBoardScreen());
                     } else {
-                      Get.offAll(const SubscriptionListScreen(),
-                          arguments: {"isShow": true});
+                      Get.offAll(
+                        const SubscriptionListScreen(),
+                        arguments: {"isShow": true},
+                      );
                     }
                   } else {
                     Get.offAll(const DashBoardScreen());
@@ -494,8 +541,9 @@ class _InformationScreenState extends State<InformationScreen>
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           shadowColor: Colors.transparent,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
         child: Text(
           "Create account".tr,
@@ -527,23 +575,35 @@ class ModernMoroccanPainter extends CustomPainter {
     const double patternSize = 140.0;
     final double offset = scrollOffset * patternSize;
 
-    for (double x = -patternSize;
-        x < size.width + patternSize;
-        x += patternSize) {
-      for (double y = -patternSize;
-          y < size.height + patternSize;
-          y += patternSize) {
+    for (
+      double x = -patternSize;
+      x < size.width + patternSize;
+      x += patternSize
+    ) {
+      for (
+        double y = -patternSize;
+        y < size.height + patternSize;
+        y += patternSize
+      ) {
         bool isEvenRow = (y / patternSize).round().isEven;
         bool isEvenCol = (x / patternSize).round().isEven;
         Paint activePaint = (isEvenRow ^ isEvenCol) ? paintRed : paintGreen;
-        _drawEightPointStar(canvas, Offset(x + offset, y + offset),
-            patternSize * 0.35, activePaint);
+        _drawEightPointStar(
+          canvas,
+          Offset(x + offset, y + offset),
+          patternSize * 0.35,
+          activePaint,
+        );
       }
     }
   }
 
   void _drawEightPointStar(
-      Canvas canvas, Offset center, double radius, Paint paint) {
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Paint paint,
+  ) {
     Path path = Path();
     for (int i = 0; i < 8; i++) {
       double angle = i * math.pi / 4;
@@ -568,47 +628,54 @@ class ModernMoroccanPainter extends CustomPainter {
 }
 
 extension InformationExtensions on _InformationScreenState {
-  Widget _buildProfileImage(BuildContext context,
-      InformationController controller, bool isDarkState) {
+  Widget _buildProfileImage(
+    BuildContext context,
+    InformationController controller,
+    bool isDarkState,
+  ) {
     return Center(
       child: Stack(
         alignment: Alignment.bottomRight,
         children: [
-          Obx(() => Container(
-                height: 120,
-                width: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.moroccoGreen.withOpacity(0.5),
-                    width: 2,
+          Obx(
+            () => Container(
+              height: 120,
+              width: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.moroccoGreen.withOpacity(0.5),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: controller.profileImage.value.isEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: Constant.userPlaceHolder,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Center(
-                              child: CircularProgressIndicator(
-                                  color: AppColors.moroccoRed)),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.person, size: 60),
-                        )
-                      : Image.file(
-                          File(controller.profileImage.value),
-                          fit: BoxFit.cover,
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(60),
+                child: controller.profileImage.value.isEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: Constant.userPlaceHolder,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.moroccoRed,
+                          ),
                         ),
-                ),
-              )),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.person, size: 60),
+                      )
+                    : Image.file(
+                        File(controller.profileImage.value),
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+          ),
           InkWell(
             onTap: () => buildBottomSheet(context, controller),
             child: Container(
@@ -632,49 +699,50 @@ extension InformationExtensions on _InformationScreenState {
 
   buildBottomSheet(BuildContext context, InformationController controller) {
     return showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Select Profile Image".tr,
-                  style: GoogleFonts.outfit(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Select Profile Image".tr,
+                style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildPickerOption(
+                    icon: Icons.camera_alt_rounded,
+                    label: "Camera".tr,
+                    onTap: () =>
+                        controller.pickFile(source: ImageSource.camera),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildPickerOption(
-                      icon: Icons.camera_alt_rounded,
-                      label: "Camera".tr,
-                      onTap: () =>
-                          controller.pickFile(source: ImageSource.camera),
-                    ),
-                    _buildPickerOption(
-                      icon: Icons.photo_library_rounded,
-                      label: "Gallery".tr,
-                      onTap: () =>
-                          controller.pickFile(source: ImageSource.gallery),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-              ],
-            ),
-          );
-        });
+                  _buildPickerOption(
+                    icon: Icons.photo_library_rounded,
+                    label: "Gallery".tr,
+                    onTap: () =>
+                        controller.pickFile(source: ImageSource.gallery),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildPickerOption({

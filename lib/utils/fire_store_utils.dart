@@ -39,6 +39,7 @@ import 'package:driver/widget/geoflutterfire/src/geoflutterfire.dart';
 import 'package:driver/widget/geoflutterfire/src/models/point.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
+import 'package:driver/utils/Preferences.dart';
 
 class FireStoreUtils {
   static FirebaseFirestore fireStore = FirebaseFirestore.instance;
@@ -47,6 +48,8 @@ class FireStoreUtils {
     bool isLogin = false;
     if (FirebaseAuth.instance.currentUser != null) {
       isLogin = await userExitOrNot(FirebaseAuth.instance.currentUser!.uid);
+    } else if (Preferences.getString('userId').isNotEmpty) {
+      isLogin = await userExitOrNot(Preferences.getString('userId'));
     } else {
       isLogin = false;
     }
@@ -164,7 +167,10 @@ class FireStoreUtils {
   }
 
   static String getCurrentUid() {
-    return FirebaseAuth.instance.currentUser!.uid;
+    if (FirebaseAuth.instance.currentUser != null) {
+      return FirebaseAuth.instance.currentUser!.uid;
+    }
+    return Preferences.getString('userId');
   }
 
   static Future<DriverUserModel?> getDriverProfile(String uuid) async {
@@ -1005,11 +1011,7 @@ class FireStoreUtils {
 
   static Future<bool> deleteUser() async {
     try {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        return false;
-      }
-      final String userId = currentUser.uid;
+      final String userId = FireStoreUtils.getCurrentUid();
       if (userId.isEmpty) {
         return false;
       }
@@ -1018,8 +1020,9 @@ class FireStoreUtils {
           .doc(userId)
           .delete();
       await FireStoreUtils.deleteReferralCode(userId);
-      await FireStoreUtils.deleteAuthUser(FireStoreUtils.getCurrentUid());
-      // await FirebaseAuth.instance.currentUser?.delete();
+      await FireStoreUtils.deleteAuthUser(userId);
+      await FirebaseAuth.instance.signOut();
+      await Preferences.clearKeyData('userId');
       return true;
     } catch (e, s) {
       log('deleteUser: Failed to delete user. Error: $e\nStackTrace: $s');
