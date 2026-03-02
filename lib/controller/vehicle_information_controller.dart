@@ -9,6 +9,7 @@ import 'package:driver/themes/app_colors.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:driver/model/language_name.dart';
 import 'package:intl/intl.dart';
 
 class VehicleInformationController extends GetxController {
@@ -103,34 +104,34 @@ class VehicleInformationController extends GetxController {
       if (value != null) {
         driverModel.value = value;
         if (driverModel.value.vehicleInformation != null) {
-          vehicleNumberController.value.text = driverModel
-              .value
-              .vehicleInformation!
-              .vehicleNumber
-              .toString();
-          selectedDate.value = driverModel
-              .value
-              .vehicleInformation!
-              .registrationDate!
-              .toDate();
+          vehicleNumberController.value.text =
+              driverModel.value.vehicleInformation!.vehicleNumber.toString();
+          selectedDate.value =
+              driverModel.value.vehicleInformation!.registrationDate!.toDate();
           registrationDateController.value.text = DateFormat(
             "dd-MM-yyyy",
           ).format(selectedDate.value!);
-          selectedColor.value = driverModel
-              .value
-              .vehicleInformation!
-              .vehicleColor
-              .toString();
+          selectedColor.value =
+              driverModel.value.vehicleInformation!.vehicleColor.toString();
           seatsController.value.text =
               driverModel.value.vehicleInformation!.seats ?? "2";
           selectedServiceType.value = await FireStoreUtils.getServiceById(
             driverModel.value.serviceId,
           );
           zoneList.clear();
-          final priceIds = selectedServiceType.value.prices!
-              .map((p) => p.zoneId)
-              .toSet();
-          zoneList.addAll(zoneAllList.where((z) => priceIds.contains(z.id)));
+          zoneList.addAll([
+            ZoneModel(
+                id: "1", name: [LanguageName(name: "Casablanca", type: "en")]),
+            ZoneModel(
+                id: "2", name: [LanguageName(name: "Tangier", type: "en")]),
+            ZoneModel(id: "3", name: [LanguageName(name: "Rabat", type: "en")]),
+            ZoneModel(
+                id: "4", name: [LanguageName(name: "Marrakech", type: "en")]),
+          ]);
+          // final priceIds = selectedServiceType.value.prices!
+          //     .map((p) => p.zoneId)
+          //     .toSet();
+          // zoneList.addAll(zoneAllList.where((z) => priceIds.contains(z.id)));
           if (driverModel.value.zoneIds != null) {
             if (zoneList.isNotEmpty) {
               for (var element in zoneList) {
@@ -145,8 +146,7 @@ class VehicleInformationController extends GetxController {
               }
             }
             zoneNameController.value.text = zoneString.value;
-            selectedPrices.value =
-                selectedServiceType.value.prices
+            selectedPrices.value = selectedServiceType.value.prices
                     ?.where((price) => selectedZone.contains(price.zoneId))
                     .toList() ??
                 <Price>[];
@@ -163,59 +163,33 @@ class VehicleInformationController extends GetxController {
               (index) => TextEditingController(),
             );
 
-            for (
-              int index = 0;
-              index < driverModel.value.vehicleInformation!.rates!.length;
-              index++
-            ) {
+            for (int index = 0;
+                index < driverModel.value.vehicleInformation!.rates!.length;
+                index++) {
               if (driverModel
-                      .value
-                      .vehicleInformation!
-                      .rates?[index]
-                      .acPerKmRate !=
+                      .value.vehicleInformation!.rates?[index].acPerKmRate !=
                   null) {
-                acPerKmRate[index].text =
-                    driverModel
-                        .value
-                        .vehicleInformation!
-                        .rates?[index]
-                        .acPerKmRate ??
+                acPerKmRate[index].text = driverModel
+                        .value.vehicleInformation!.rates?[index].acPerKmRate ??
                     '';
-                acNonAcWithoutPerKmRate[index].text =
-                    driverModel
-                        .value
-                        .vehicleInformation!
-                        .rates?[index]
-                        .perKmRate ??
+                acNonAcWithoutPerKmRate[index].text = driverModel
+                        .value.vehicleInformation!.rates?[index].perKmRate ??
                     '';
-                nonAcPerKmRate[index].text =
-                    driverModel
-                        .value
-                        .vehicleInformation!
-                        .rates?[index]
-                        .nonAcPerKmRate ??
+                nonAcPerKmRate[index].text = driverModel.value
+                        .vehicleInformation!.rates?[index].nonAcPerKmRate ??
                     '';
               } else {
-                nonAcPerKmRate[index].text =
-                    driverModel
-                        .value
-                        .vehicleInformation!
-                        .rates?[index]
-                        .nonAcPerKmRate ??
+                nonAcPerKmRate[index].text = driverModel.value
+                        .vehicleInformation!.rates?[index].nonAcPerKmRate ??
                     '';
-                acNonAcWithoutPerKmRate[index].text =
-                    driverModel
-                        .value
-                        .vehicleInformation!
-                        .rates?[index]
-                        .perKmRate ??
+                acNonAcWithoutPerKmRate[index].text = driverModel
+                        .value.vehicleInformation!.rates?[index].perKmRate ??
                     '';
               }
             }
           }
-          tabBarheight.value = selectedPrices.first.isAcNonAc == true
-              ? 200
-              : 100;
+          tabBarheight.value =
+              selectedPrices.first.isAcNonAc == true ? 200 : 100;
         }
         if (driverModel.value.zoneIds == null) {
           selectedServiceType.value = serviceList.first;
@@ -246,10 +220,16 @@ class VehicleInformationController extends GetxController {
     zoneNameController.value.text = '';
     selectedPrices.clear();
     zoneList.clear();
-    final priceIds = selectedServiceType.value.prices!
-        .map((p) => p.zoneId)
-        .toSet();
-    zoneList.addAll(zoneAllList.where((z) => priceIds.contains(z.id)));
+    zoneList.addAll([
+      ZoneModel(id: "1", name: [LanguageName(name: "Casablanca", type: "en")]),
+      ZoneModel(id: "2", name: [LanguageName(name: "Tangier", type: "en")]),
+      ZoneModel(id: "3", name: [LanguageName(name: "Rabat", type: "en")]),
+      ZoneModel(id: "4", name: [LanguageName(name: "Marrakech", type: "en")]),
+    ]);
+    // final priceIds = selectedServiceType.value.prices!
+    //     .map((p) => p.zoneId)
+    //     .toSet();
+    // zoneList.addAll(zoneAllList.where((z) => priceIds.contains(z.id)));
   }
 
   void setVehicleDetails() {

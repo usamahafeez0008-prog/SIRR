@@ -15,6 +15,7 @@ class DriverUserModel {
   String? fullName;
   bool? isOnline;
   String? id;
+  String? userTitle;
   String? serviceId;
   List<LanguageName>? serviceName;
   String? fcmToken;
@@ -45,6 +46,7 @@ class DriverUserModel {
     this.fullName,
     this.isOnline,
     this.id,
+    this.userTitle,
     this.serviceId,
     this.serviceName,
     this.fcmToken,
@@ -76,6 +78,7 @@ class DriverUserModel {
     fullName = json['fullName'];
     isOnline = json['isOnline'];
     id = json['id'];
+    userTitle = json['userTitle'];
     serviceId = json['serviceId'];
     fcmToken = json['fcmToken'];
     email = json['email'];
@@ -89,9 +92,8 @@ class DriverUserModel {
     location = json['location'] != null
         ? LocationLatLng.fromJson(json['location'])
         : null;
-    position = json['position'] != null
-        ? Positions.fromJson(json['position'])
-        : null;
+    position =
+        json['position'] != null ? Positions.fromJson(json['position']) : null;
     createdAt = json['createdAt'];
     zoneIds = json['zoneIds'];
     subscriptionTotalOrders = json['subscriptionTotalOrders'];
@@ -121,6 +123,7 @@ class DriverUserModel {
     data['fullName'] = fullName;
     data['isOnline'] = isOnline;
     data['id'] = id;
+    data['userTitle'] = userTitle;
     data['serviceId'] = serviceId;
     data['fcmToken'] = fcmToken;
     data['email'] = email;

@@ -53,9 +53,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
       init: VehicleInformationController(),
       builder: (controller) {
         return Scaffold(
-          backgroundColor: isDark
-              ? AppColors.darkBackground
-              : AppColors.moroccoBackground,
+          backgroundColor:
+              isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
           body: Stack(
             children: [
               // Animated Moroccan background
@@ -100,13 +99,12 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   _buildStyledTextField(
                                     context,
                                     controller: controller
-                                        .vehicleNumberController
-                                        .value,
+                                        .vehicleNumberController.value,
                                     hintText: "e.g. ABC-1234".tr,
                                     isDark: isDark,
                                     enabled:
                                         controller.driverModel.value.ownerId ==
-                                        null,
+                                            null,
                                     prefixIcon: Icons.pin_rounded,
                                   ),
                                   const SizedBox(height: 14),
@@ -120,9 +118,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   InkWell(
                                     onTap: () async {
                                       if (controller
-                                              .driverModel
-                                              .value
-                                              .ownerId ==
+                                              .driverModel.value.ownerId ==
                                           null) {
                                         await Constant.selectDate(context).then(
                                           (value) {
@@ -143,8 +139,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                     child: _buildStyledTextField(
                                       context,
                                       controller: controller
-                                          .registrationDateController
-                                          .value,
+                                          .registrationDateController.value,
                                       hintText: "dd-MM-yyyy".tr,
                                       isDark: isDark,
                                       enabled: false,
@@ -164,14 +159,14 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   AbsorbPointer(
                                     absorbing:
                                         controller.driverModel.value.ownerId !=
-                                        null,
+                                            null,
                                     child: _buildStyledDropdown<String>(
                                       context,
                                       isDark: isDark,
                                       value:
                                           controller.selectedColor.value.isEmpty
-                                          ? null
-                                          : controller.selectedColor.value,
+                                              ? null
+                                              : controller.selectedColor.value,
                                       hint: "Select vehicle color".tr,
                                       prefixIcon: Icons.palette_rounded,
                                       items: controller.carColorList
@@ -198,21 +193,15 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   AbsorbPointer(
                                     absorbing:
                                         controller.driverModel.value.ownerId !=
-                                        null,
+                                            null,
                                     child: _buildStyledDropdown<String>(
                                       context,
                                       isDark: isDark,
-                                      value:
-                                          controller
-                                              .seatsController
-                                              .value
-                                              .text
-                                              .isEmpty
+                                      value: controller.seatsController.value
+                                              .text.isEmpty
                                           ? null
                                           : controller
-                                                .seatsController
-                                                .value
-                                                .text,
+                                              .seatsController.value.text,
                                       hint: "How Many Seats".tr,
                                       prefixIcon: Icons
                                           .airline_seat_recline_extra_rounded,
@@ -238,9 +227,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   InkWell(
                                     onTap: () {
                                       if (controller
-                                              .driverModel
-                                              .value
-                                              .ownerId ==
+                                              .driverModel.value.ownerId ==
                                           null) {
                                         controller.selectedTempZone.clear();
                                         controller.selectedTempZone.addAll(
@@ -292,7 +279,25 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   SizedBox(
                                     height: Responsive.height(28, context),
                                     child: ListView.builder(
-                                      itemCount: controller.serviceList.length,
+                                      itemCount: () {
+                                        if (controller
+                                                .driverModel.value.userTitle ==
+                                            "Mr") {
+                                          return controller.serviceList.length >
+                                                  0
+                                              ? controller.serviceList.length -
+                                                  1
+                                              : 0;
+                                        } else if (controller
+                                                .driverModel.value.userTitle ==
+                                            "Mme") {
+                                          return controller.serviceList.length >
+                                                  0
+                                              ? 1
+                                              : 0;
+                                        }
+                                        return controller.serviceList.length;
+                                      }(),
                                       scrollDirection: Axis.horizontal,
                                       shrinkWrap: true,
                                       padding: const EdgeInsets.only(
@@ -301,8 +306,21 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                         left: 12,
                                       ),
                                       itemBuilder: (context, index) {
-                                        ServiceModel serviceModel =
-                                            controller.serviceList[index];
+                                        ServiceModel serviceModel;
+                                        if (controller
+                                                .driverModel.value.userTitle ==
+                                            "Mr") {
+                                          serviceModel =
+                                              controller.serviceList[index];
+                                        } else if (controller
+                                                .driverModel.value.userTitle ==
+                                            "Mme") {
+                                          serviceModel =
+                                              controller.serviceList.last;
+                                        } else {
+                                          serviceModel =
+                                              controller.serviceList[index];
+                                        }
                                         return Obx(
                                           () => _buildServiceCard(
                                             context,
@@ -684,8 +702,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 onTap: (value) {
                   controller.tabBarheight.value =
                       controller.selectedPrices[value].isAcNonAc == true
-                      ? 200
-                      : 100;
+                          ? 200
+                          : 100;
                   controller.update();
                 },
                 indicatorColor: AppColors.moroccoRed,
@@ -748,7 +766,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   controller.driverModel.value.ownerId == null,
                               symbol:
                                   Constant.currencyModel?.symbol.toString() ??
-                                  'MAD',
+                                      'MAD',
                             ),
                             const SizedBox(height: 14),
                             Text(
@@ -770,7 +788,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   controller.driverModel.value.ownerId == null,
                               symbol:
                                   Constant.currencyModel?.symbol.toString() ??
-                                  'MAD',
+                                      'MAD',
                             ),
                           ],
                         ),
@@ -804,7 +822,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                   controller.driverModel.value.ownerId == null,
                               symbol:
                                   Constant.currencyModel?.symbol.toString() ??
-                                  'MAD',
+                                      'MAD',
                             ),
                           ],
                         ),
@@ -1018,8 +1036,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                                       ),
                                       errorWidget: (context, url, error) =>
                                           Image.network(
-                                            'https://firebasestorage.googleapis.com/v0/b/goride-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115',
-                                          ),
+                                        'https://firebasestorage.googleapis.com/v0/b/goride-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115',
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -1207,8 +1225,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 (item) => CheckboxListTile(
                   checkColor: Colors.white,
                   activeColor: AppColors.moroccoGreen,
-                  value:
-                      controller.selectedDriverRulesList.indexWhere(
+                  value: controller.selectedDriverRulesList.indexWhere(
                             (element) => element.id == item.id,
                           ) ==
                           -1
@@ -1435,8 +1452,8 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
                 if (controller.selectedTempZone.isEmpty) {
                   ShowToastDialog.showToast("Please select zone".tr);
                 } else {
-                  controller.selectedPrices.value =
-                      controller.selectedServiceType.value.prices
+                  controller.selectedPrices
+                      .value = controller.selectedServiceType.value.prices
                           ?.where(
                             (price) =>
                                 controller.selectedZone.contains(price.zoneId),
@@ -1544,16 +1561,12 @@ class _MoroccanPainter extends CustomPainter {
     const double patternSize = 140.0;
     final double offset = scrollOffset * patternSize;
 
-    for (
-      double x = -patternSize;
-      x < size.width + patternSize;
-      x += patternSize
-    ) {
-      for (
-        double y = -patternSize;
-        y < size.height + patternSize;
-        y += patternSize
-      ) {
+    for (double x = -patternSize;
+        x < size.width + patternSize;
+        x += patternSize) {
+      for (double y = -patternSize;
+          y < size.height + patternSize;
+          y += patternSize) {
         bool isEvenRow = (y / patternSize).round().isEven;
         bool isEvenCol = (x / patternSize).round().isEven;
         Paint activePaint = (isEvenRow ^ isEvenCol) ? paintRed : paintGreen;

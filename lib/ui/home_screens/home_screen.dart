@@ -107,9 +107,11 @@ class HomeScreen extends StatelessWidget {
                                   const SizedBox(height: 32),
                                   // Title
                                   Text(
-                                    'Coming Soon'.tr,
+                                    '${controller.driverModel.value.userTitle ?? ''} ${controller.driverModel.value.fullName ?? ''} \n Other Services Coming Soon'
+                                        .tr,
+                                    textAlign: TextAlign.center,
                                     style: GoogleFonts.outfit(
-                                      fontSize: 28,
+                                      fontSize: 24,
                                       fontWeight: FontWeight.w900,
                                       color: isDark
                                           ? Colors.white

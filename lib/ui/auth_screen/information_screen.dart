@@ -58,9 +58,8 @@ class _InformationScreenState extends State<InformationScreen>
       init: InformationController(),
       builder: (controller) {
         return Scaffold(
-          backgroundColor: !isDark
-              ? AppColors.darkBackground
-              : AppColors.moroccoBackground,
+          backgroundColor:
+              !isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
           body: Stack(
             children: [
               // // 1. Immersive Animated Background
@@ -170,9 +169,8 @@ class _InformationScreenState extends State<InformationScreen>
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
-          color: isDark
-              ? Colors.white12
-              : AppColors.moroccoGreen.withOpacity(0.5),
+          color:
+              isDark ? Colors.white12 : AppColors.moroccoGreen.withOpacity(0.5),
           width: 1,
         ),
         boxShadow: [
@@ -187,6 +185,17 @@ class _InformationScreenState extends State<InformationScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildProfileImage(context, controller, isDark),
+          const SizedBox(height: 16),
+          Obx(
+            () => _buildDropdown(
+              items: controller.titles,
+              value: controller.selectedTitle.value,
+              onChanged: (value) {
+                controller.selectedTitle.value = value!;
+              },
+              isDark: isDark,
+            ),
+          ),
           const SizedBox(height: 16),
           _buildTextField(
             hintText: 'First name'.tr,
@@ -243,6 +252,53 @@ class _InformationScreenState extends State<InformationScreen>
     );
   }
 
+  Widget _buildDropdown({
+    required List<String> items,
+    required String value,
+    required void Function(String?) onChanged,
+    required bool isDark,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color:
+              isDark ? Colors.white10 : AppColors.moroccoGreen.withOpacity(0.2),
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<String>(
+          value: value,
+          onChanged: onChanged,
+          dropdownColor: isDark ? Colors.grey[900] : Colors.white,
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 18,
+            ),
+            border: InputBorder.none,
+          ),
+          style: GoogleFonts.outfit(
+            color: isDark ? Colors.white : Colors.black87,
+            fontSize: 16,
+          ),
+          items: items.map((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: isDark ? Colors.white70 : Colors.black54,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTextField({
     required String hintText,
     required TextEditingController controller,
@@ -256,9 +312,8 @@ class _InformationScreenState extends State<InformationScreen>
         color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark
-              ? Colors.white10
-              : AppColors.moroccoGreen.withOpacity(0.2),
+          color:
+              isDark ? Colors.white10 : AppColors.moroccoGreen.withOpacity(0.2),
         ),
       ),
       child: TextFormField(
@@ -290,9 +345,8 @@ class _InformationScreenState extends State<InformationScreen>
         color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark
-              ? Colors.white10
-              : AppColors.moroccoGreen.withOpacity(0.2),
+          color:
+              isDark ? Colors.white10 : AppColors.moroccoGreen.withOpacity(0.2),
         ),
       ),
       child: TextFormField(
@@ -308,9 +362,8 @@ class _InformationScreenState extends State<InformationScreen>
             onChanged: (value) {
               controller.countryCode.value = value.dialCode.toString();
             },
-            dialogBackgroundColor: !isDark
-                ? AppColors.moroccoGreen
-                : AppColors.background,
+            dialogBackgroundColor:
+                !isDark ? AppColors.moroccoGreen : AppColors.background,
             initialSelection: controller.countryCode.value,
             textStyle: GoogleFonts.outfit(
               color: isDark ? Colors.white70 : Colors.black87,
@@ -378,7 +431,8 @@ class _InformationScreenState extends State<InformationScreen>
                   DriverUserModel userModel = controller.userModel.value;
                   userModel.fullName =
                       controller.firstNameController.value.text +
-                      controller.lastNameController.value.text;
+                          controller.lastNameController.value.text;
+                  userModel.userTitle = controller.selectedTitle.value;
                   userModel.email = controller.emailController.value.text;
                   userModel.countryCode = controller.countryCode.value;
                   userModel.phoneNumber =
@@ -394,12 +448,12 @@ class _InformationScreenState extends State<InformationScreen>
                   if (controller.profileImage.value.isNotEmpty) {
                     userModel.profilePic =
                         await Constant.uploadUserImageToFireStorage(
-                          File(controller.profileImage.value),
-                          "profileImage/${FireStoreUtils.getCurrentUid()}",
-                          File(
-                            controller.profileImage.value,
-                          ).path.split('/').last,
-                        );
+                      File(controller.profileImage.value),
+                      "profileImage/${FireStoreUtils.getCurrentUid()}",
+                      File(
+                        controller.profileImage.value,
+                      ).path.split('/').last,
+                    );
                   }
 
                   await FireStoreUtils.getReferralUserByCode(
@@ -435,9 +489,8 @@ class _InformationScreenState extends State<InformationScreen>
                             isPlanExpire = true;
                           }
                         } else {
-                          DateTime expiryDate = userModel
-                              .subscriptionExpiryDate!
-                              .toDate();
+                          DateTime expiryDate =
+                              userModel.subscriptionExpiryDate!.toDate();
                           isPlanExpire = expiryDate.isBefore(DateTime.now());
                         }
                       } else {
@@ -467,9 +520,9 @@ class _InformationScreenState extends State<InformationScreen>
             } else {
               ShowToastDialog.showLoader("Please wait".tr);
               DriverUserModel userModel = controller.userModel.value;
-              userModel.fullName =
-                  controller.firstNameController.value.text +
+              userModel.fullName = controller.firstNameController.value.text +
                   controller.lastNameController.value.text;
+              userModel.userTitle = controller.selectedTitle.value;
               userModel.email = controller.emailController.value.text;
               userModel.countryCode = controller.countryCode.value;
               userModel.phoneNumber =
@@ -485,10 +538,10 @@ class _InformationScreenState extends State<InformationScreen>
               if (controller.profileImage.value.isNotEmpty) {
                 userModel.profilePic =
                     await Constant.uploadUserImageToFireStorage(
-                      File(controller.profileImage.value),
-                      "profileImage/${FireStoreUtils.getCurrentUid()}",
-                      File(controller.profileImage.value).path.split('/').last,
-                    );
+                  File(controller.profileImage.value),
+                  "profileImage/${FireStoreUtils.getCurrentUid()}",
+                  File(controller.profileImage.value).path.split('/').last,
+                );
               }
 
               ReferralModel referralModel = ReferralModel(
@@ -510,8 +563,8 @@ class _InformationScreenState extends State<InformationScreen>
                         isPlanExpire = true;
                       }
                     } else {
-                      DateTime expiryDate = userModel.subscriptionExpiryDate!
-                          .toDate();
+                      DateTime expiryDate =
+                          userModel.subscriptionExpiryDate!.toDate();
                       isPlanExpire = expiryDate.isBefore(DateTime.now());
                     }
                   } else {
@@ -575,16 +628,12 @@ class ModernMoroccanPainter extends CustomPainter {
     const double patternSize = 140.0;
     final double offset = scrollOffset * patternSize;
 
-    for (
-      double x = -patternSize;
-      x < size.width + patternSize;
-      x += patternSize
-    ) {
-      for (
-        double y = -patternSize;
-        y < size.height + patternSize;
-        y += patternSize
-      ) {
+    for (double x = -patternSize;
+        x < size.width + patternSize;
+        x += patternSize) {
+      for (double y = -patternSize;
+          y < size.height + patternSize;
+          y += patternSize) {
         bool isEvenRow = (y / patternSize).round().isEven;
         bool isEvenCol = (x / patternSize).round().isEven;
         Paint activePaint = (isEvenRow ^ isEvenCol) ? paintRed : paintGreen;
