@@ -1487,8 +1487,12 @@ class FireStoreUtils {
         .get()
         .then((value) {
       for (var element in value.docs) {
-        ZoneModel ariPortModel = ZoneModel.fromJson(element.data());
-        airPortList.add(ariPortModel);
+        try {
+          ZoneModel ariPortModel = ZoneModel.fromJson(element.data());
+          airPortList.add(ariPortModel);
+        } catch (e) {
+          log("Failed to parse zone: ${element.id}, Error: $e");
+        }
       }
     }).catchError((error) {
       log(error.toString());

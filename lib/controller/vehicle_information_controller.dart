@@ -119,7 +119,7 @@ class VehicleInformationController extends GetxController {
             driverModel.value.serviceId,
           );
           zoneList.clear();
-          zoneList.addAll([
+          /* zoneList.addAll([
             ZoneModel(
                 id: "1", name: [LanguageName(name: "Casablanca", type: "en")]),
             ZoneModel(
@@ -127,11 +127,8 @@ class VehicleInformationController extends GetxController {
             ZoneModel(id: "3", name: [LanguageName(name: "Rabat", type: "en")]),
             ZoneModel(
                 id: "4", name: [LanguageName(name: "Marrakech", type: "en")]),
-          ]);
-          // final priceIds = selectedServiceType.value.prices!
-          //     .map((p) => p.zoneId)
-          //     .toSet();
-          // zoneList.addAll(zoneAllList.where((z) => priceIds.contains(z.id)));
+          ]);*/
+          zoneList.addAll(zoneAllList);
           if (driverModel.value.zoneIds != null) {
             if (zoneList.isNotEmpty) {
               for (var element in zoneList) {
@@ -220,16 +217,7 @@ class VehicleInformationController extends GetxController {
     zoneNameController.value.text = '';
     selectedPrices.clear();
     zoneList.clear();
-    zoneList.addAll([
-      ZoneModel(id: "1", name: [LanguageName(name: "Casablanca", type: "en")]),
-      ZoneModel(id: "2", name: [LanguageName(name: "Tangier", type: "en")]),
-      ZoneModel(id: "3", name: [LanguageName(name: "Rabat", type: "en")]),
-      ZoneModel(id: "4", name: [LanguageName(name: "Marrakech", type: "en")]),
-    ]);
-    // final priceIds = selectedServiceType.value.prices!
-    //     .map((p) => p.zoneId)
-    //     .toSet();
-    // zoneList.addAll(zoneAllList.where((z) => priceIds.contains(z.id)));
+    zoneList.addAll(zoneAllList);
   }
 
   void setVehicleDetails() {
