@@ -24,39 +24,101 @@ class HomeScreen extends StatelessWidget {
         builder: (controller) {
           return Scaffold(
             backgroundColor: AppColors.lightprimary,
-            body: controller.isLoading.value || controller.driverModel.value.id == null
+            body: controller.isLoading.value ||
+                    controller.driverModel.value.id == null
                 ? Constant.loader(isDarkTheme: themeChange.getThem())
                 : Column(
-              children: [
-                if (controller.driverModel.value.ownerId == null)
-                  double.parse(controller.driverModel.value.walletAmount ?? '0.0') >= double.parse(Constant.minimumDepositToRideAccept)
-                      ? SizedBox(
-                    height: Responsive.width(8, context),
-                    width: Responsive.width(100, context),
-                  )
-                      : SizedBox(
-                    height: Responsive.width(18, context),
-                    width: Responsive.width(100, context),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      child: Text("You have to minimum ${Constant.amountShow(amount: Constant.minimumDepositToRideAccept.toString())} wallet amount to Accept Order and place a bid".tr,
-                          style: GoogleFonts.poppins(color: Colors.white)),
-                    ),
+                    children: [
+                      if (controller.driverModel.value.ownerId == null)
+                        double.parse(
+                                    controller.driverModel.value.walletAmount ??
+                                        '0.0') >=
+                                double.parse(
+                                    Constant.minimumDepositToRideAccept)
+                            ? SizedBox(
+                                height: Responsive.width(8, context),
+                                width: Responsive.width(100, context),
+                              )
+                            : SizedBox(
+                                height: Responsive.width(18, context),
+                                width: Responsive.width(100, context),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
+                                  child: Text(
+                                      "You have to minimum ${Constant.amountShow(amount: Constant.minimumDepositToRideAccept.toString())} wallet amount to Accept Order and place a bid"
+                                          .tr,
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.white)),
+                                ),
+                              ),
+                      // Modern Option Pills Navigation
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Row(
+                            children: [
+                              _buildPill(
+                                context,
+                                controller,
+                                0,
+                                'New'.tr,
+                                const Icon(Icons.explore_rounded, size: 20),
+                              ),
+                              _buildPill(
+                                context,
+                                controller,
+                                1,
+                                'Accepted'.tr,
+                                const Icon(Icons.check_circle_outline_rounded,
+                                    size: 20),
+                              ),
+                              _buildPill(
+                                context,
+                                controller,
+                                2,
+                                'Active'.tr,
+                                const Icon(Icons.directions_car_rounded,
+                                    size: 20),
+                                badgeCount: controller.isActiveValue.value,
+                              ),
+                              _buildPill(
+                                context,
+                                controller,
+                                3,
+                                'Completed'.tr,
+                                const Icon(Icons.history_rounded, size: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: Responsive.height(100, context),
+                          width: Responsive.width(100, context),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.background,
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  topRight: Radius.circular(30))),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(30),
+                                topRight: Radius.circular(30)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: controller.widgetOptions
+                                  .elementAt(controller.selectedIndex.value),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                Expanded(
-                  child: Container(
-                    height: Responsive.height(100, context),
-                    width: Responsive.width(100, context),
-                    decoration:
-                    BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: controller.widgetOptions.elementAt(controller.selectedIndex.value),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            /*
             bottomNavigationBar: BottomNavigationBar(
                 items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
@@ -123,7 +185,89 @@ class HomeScreen extends StatelessWidget {
                 selectedFontSize: 12,
                 unselectedFontSize: 12,
                 onTap: controller.onItemTapped),
+             */
           );
         });
+  }
+
+  Widget _buildPill(
+    BuildContext context,
+    HomeController controller,
+    int index,
+    String label,
+    Widget icon, {
+    int badgeCount = 0,
+  }) {
+    final bool isSelected = controller.selectedIndex.value == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: InkWell(
+        onTap: () => controller.onItemTapped(index),
+        borderRadius: BorderRadius.circular(30),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.white.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (badgeCount > 0)
+                badges.Badge(
+                  badgeStyle: const badges.BadgeStyle(
+                    badgeColor: Colors.red,
+                    padding: EdgeInsets.all(4),
+                  ),
+                  badgeContent: Text(
+                    badgeCount.toString(),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  child: IconTheme(
+                    data: IconThemeData(
+                      color: isSelected ? AppColors.moroccoRed : Colors.white,
+                    ),
+                    child: icon,
+                  ),
+                )
+              else
+                IconTheme(
+                  data: IconThemeData(
+                    color: isSelected ? AppColors.moroccoRed : Colors.white,
+                  ),
+                  child: icon,
+                ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: GoogleFonts.outfit(
+                  color: isSelected ? AppColors.moroccoRed : Colors.white,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -4,12 +4,11 @@ import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/model/service_model.dart';
 import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
 import 'package:driver/ui/home_screens/order_map_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
-import 'package:driver/widget/location_view.dart';
-import 'package:driver/widget/user_view.dart';
+import 'package:driver/model/user_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -231,174 +230,292 @@ class NewOrderScreen extends StatelessWidget {
                               finalAmount =
                                   amount + basicFare + totalChargeOfMinute;
 
-                              return InkWell(
-                                onTap: () {
-                                  Get.to(const OrderMapScreen(), arguments: {
-                                    "orderModel": orderModel.id.toString()
-                                  })!
-                                      .then((value) {
-                                    if (value != null && value == true) {
-                                      controller.selectedIndex.value = 1;
-                                    }
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: themeChange.getThem()
-                                          ? AppColors.darkContainerBackground
-                                          : AppColors.containerBackground,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                      border: Border.all(
-                                          color: themeChange.getThem()
-                                              ? AppColors.darkContainerBorder
-                                              : AppColors.containerBorder,
-                                          width: 0.5),
-                                      boxShadow: themeChange.getThem()
-                                          ? null
-                                          : [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.5),
-                                                blurRadius: 8,
-                                                offset: const Offset(0,
-                                                    2), // changes position of shadow
-                                              ),
-                                            ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                      child: Column(
-                                        children: [
-                                          UserView(
-                                            userId: orderModel.userId,
-                                            amount: orderModel.offerRate,
-                                            distance: orderModel.distance,
-                                            distanceType:
-                                                orderModel.distanceType,
-                                            isAcOrNonAc: orderModel
-                                                        .service
-                                                        ?.prices
-                                                        ?.first
-                                                        .isAcNonAc ==
-                                                    false
-                                                ? null
-                                                : orderModel.isAcSelected,
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 5),
-                                            child: Divider(),
-                                          ),
-                                          LocationView(
-                                            sourceLocation: orderModel
-                                                .sourceLocationName
-                                                .toString(),
-                                            destinationLocation: orderModel
-                                                .destinationLocationName
-                                                .toString(),
-                                          ),
-                                          Column(
-                                            children: [
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              orderModel.service!.offerRate ==
-                                                      true
-                                                  ? Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 5),
-                                                      child: Container(
-                                                        width: Responsive.width(
-                                                            100, context),
-                                                        decoration: BoxDecoration(
-                                                            color: themeChange
-                                                                    .getThem()
-                                                                ? AppColors
-                                                                    .darkGray
-                                                                : AppColors
-                                                                    .gray,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            10))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 10),
-                                                          child: Center(
-                                                            child: Text(
-                                                              'Recommended Price is ${Constant.amountShow(amount: finalAmount.toString())}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
-                                                              style: GoogleFonts.poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 5),
-                                                      child: Container(
-                                                        width: Responsive.width(
-                                                            100, context),
-                                                        decoration: BoxDecoration(
-                                                            color: themeChange
-                                                                    .getThem()
-                                                                ? AppColors
-                                                                    .darkGray
-                                                                : AppColors
-                                                                    .gray,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            10))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 10),
-                                                          child: Center(
-                                                            child: Text(
-                                                              'Recommended Price is ${Constant.amountShow(amount: orderModel.offerRate.toString())}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
-                                                              style: GoogleFonts.poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
+                              return _buildOrderCard(context, orderModel,
+                                  themeChange, finalAmount, controller);
                             },
                           );
                         }
                       });
         });
+  }
+
+  Widget _buildOrderCard(
+      BuildContext context,
+      OrderModel orderModel,
+      DarkThemeProvider themeChange,
+      double finalAmount,
+      HomeController controller) {
+    return FutureBuilder<UserModel?>(
+      future: FireStoreUtils.getCustomer(orderModel.userId.toString()),
+      builder: (context, snapshot) {
+        UserModel? customer = snapshot.data;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          child: InkWell(
+            onTap: () {
+              Get.to(const OrderMapScreen(),
+                      arguments: {"orderModel": orderModel.id.toString()})!
+                  .then((value) {
+                if (value != null && value == true) {
+                  controller.selectedIndex.value = 1;
+                }
+              });
+            },
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: themeChange.getThem()
+                    ? AppColors.darkContainerBackground
+                    : AppColors.containerBackground,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(
+                  color: themeChange.getThem()
+                      ? AppColors.darkContainerBorder.withOpacity(0.5)
+                      : AppColors.containerBorder.withOpacity(0.5),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Top Section: Info & Image
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                Constant.dateAndTimeFormatTimestamp(
+                                    orderModel.createdDate!),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  color: themeChange.getThem()
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                customer?.fullName ?? 'Loading...'.tr,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: themeChange.getThem()
+                                      ? Colors.white
+                                      : AppColors.moroccoText,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              _buildInfoRow(
+                                Icons.payments_rounded,
+                                Constant.amountShow(
+                                    amount:
+                                        (orderModel.service!.offerRate == true
+                                                ? finalAmount
+                                                : double.tryParse(orderModel
+                                                        .offerRate
+                                                        .toString()) ??
+                                                    0.0)
+                                            .toString()),
+                                AppColors.moroccoGreen,
+                              ),
+                              const SizedBox(height: 4),
+                              _buildInfoRow(
+                                Icons.straighten_rounded,
+                                "${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}",
+                                Colors.blueGrey,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: CachedNetworkImage(
+                            height: 80,
+                            width: 80,
+                            imageUrl: customer?.profilePic ?? '',
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2)),
+                            ),
+                            errorWidget: (context, url, error) => Image.network(
+                              Constant.userPlaceHolder,
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Middle Section: Locations
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        _buildLocationItem(
+                          context,
+                          Icons.circle,
+                          AppColors.moroccoGreen,
+                          orderModel.sourceLocationName.toString(),
+                          themeChange,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Column(
+                              children: List.generate(
+                                3,
+                                (index) => Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  width: 2,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.4),
+                                    borderRadius: BorderRadius.circular(1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        _buildLocationItem(
+                          context,
+                          Icons.location_on_rounded,
+                          AppColors.moroccoRed,
+                          orderModel.destinationLocationName.toString(),
+                          themeChange,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Bottom Section: Map Button
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Get.to(const OrderMapScreen(), arguments: {
+                              "orderModel": orderModel.id.toString()
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.moroccoGreen.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.map_rounded,
+                                    size: 18, color: AppColors.moroccoRed),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "Map".tr,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.moroccoRed,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (orderModel.isAcSelected == true)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.moroccoGreen.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.ac_unit,
+                                    size: 14, color: AppColors.moroccoGreen),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "AC".tr,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.moroccoGreen,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: color),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationItem(BuildContext context, IconData icon, Color color,
+      String text, DarkThemeProvider themeChange) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: color),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              fontSize: 14,
+              color: themeChange.getThem() ? Colors.white70 : Colors.black87,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   double convertToMinutes(String duration) {

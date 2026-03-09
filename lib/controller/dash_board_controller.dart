@@ -8,7 +8,6 @@ import 'package:driver/ui/bank_details/bank_details_screen.dart';
 import 'package:driver/ui/chat_screen/inbox_screen.dart';
 import 'package:driver/ui/freight/freight_screen.dart';
 import 'package:driver/ui/help_support_screen/help_support_screen.dart';
-import 'package:driver/ui/home_screens/home_screen.dart';
 import 'package:driver/ui/intercity_screen/home_intercity_screen.dart';
 import 'package:driver/ui/online_registration/online_registartion_screen.dart';
 import 'package:driver/ui/profile_screen/profile_screen.dart';
@@ -25,6 +24,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../ui/home_screens/home_screen.dart';
 
 class DashBoardController extends GetxController {
   RxList<DrawerItem> drawerItems = <DrawerItem>[].obs;
