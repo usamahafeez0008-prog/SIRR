@@ -59,7 +59,7 @@ class _InformationScreenState extends State<InformationScreen>
       builder: (controller) {
         return Scaffold(
           backgroundColor:
-              !isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+              isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
           body: Stack(
             children: [
               // // 1. Immersive Animated Background
@@ -115,14 +115,14 @@ class _InformationScreenState extends State<InformationScreen>
                           style: GoogleFonts.outfit(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: !isDark ? Colors.white60 : Colors.black45,
+                            color: isDark ? Colors.white60 : Colors.black45,
                           ),
                         ),
 
                         const SizedBox(height: 40),
 
                         // 3. Form Card
-                        _buildGlassCard(context, !isDark, controller),
+                        _buildGlassCard(context, isDark, controller),
 
                         const SizedBox(height: 40),
                       ],
@@ -363,7 +363,7 @@ class _InformationScreenState extends State<InformationScreen>
               controller.countryCode.value = value.dialCode.toString();
             },
             dialogBackgroundColor:
-                !isDark ? AppColors.moroccoGreen : AppColors.background,
+                isDark ? AppColors.moroccoGreen : AppColors.background,
             initialSelection: controller.countryCode.value,
             textStyle: GoogleFonts.outfit(
               color: isDark ? Colors.white70 : Colors.black87,

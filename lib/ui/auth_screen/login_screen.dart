@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen>
         init: LoginController(),
         builder: (controller) {
           return Scaffold(
-            backgroundColor: !isDark
+            backgroundColor: isDark
                 ? AppColors.darkBackground
                 : AppColors.moroccoBackground,
             body: Stack(
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen>
                       return CustomPaint(
                         painter: ModernMoroccanPainter(
                           scrollOffset: _backgroundController.value,
-                          isDark: !isDark,
+                          isDark: isDark,
                         ),
                       );
                     },
@@ -116,13 +116,13 @@ class _LoginScreenState extends State<LoginScreen>
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: !isDark ? Colors.white60 : Colors.black45,
+                              color: isDark ? Colors.white60 : Colors.black45,
                             ),
                           ),
 
                           const SizedBox(height: 20),
                           // 3. Clean Card (Light Glassmversion)
-                          _buildGlassCard(context, !isDark, controller),
+                          _buildGlassCard(context, isDark, controller),
                           const SizedBox(height: 32),
                           // Terms & Privacy
                           _buildModernTerms(isDark),
@@ -251,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen>
             onChanged: (value) {
               controller.countryCode.value = value.dialCode.toString();
             },
-            dialogBackgroundColor: !isDark
+            dialogBackgroundColor: isDark
                 ? AppColors.moroccoGreen.withOpacity(0.6)
                 : AppColors.background,
             initialSelection: controller.countryCode.value,
@@ -432,7 +432,7 @@ class _LoginScreenState extends State<LoginScreen>
         text: 'Agreement on '.tr,
         style: GoogleFonts.outfit(
           fontSize: 12,
-          color: !isDark ? Colors.white38 : Colors.black38,
+          color: isDark ? Colors.white38 : Colors.black38,
         ),
         children: [
           TextSpan(

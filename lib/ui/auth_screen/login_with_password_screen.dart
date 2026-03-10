@@ -48,7 +48,7 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen>
         init: LoginWithPasswordController(),
         builder: (controller) {
           return Scaffold(
-            backgroundColor: !isDark
+            backgroundColor: isDark
                 ? AppColors.darkBackground
                 : AppColors.moroccoBackground,
             body: Stack(
@@ -61,7 +61,7 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen>
                       return CustomPaint(
                         painter: ModernMoroccanPainter(
                           scrollOffset: _backgroundController.value,
-                          isDark: !isDark,
+                          isDark: isDark,
                         ),
                       );
                     },
@@ -141,19 +141,19 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen>
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: !isDark ? Colors.white60 : Colors.black45,
+                              color: isDark ? Colors.white60 : Colors.black45,
                             ),
                           ),
 
                           const SizedBox(height: 40),
 
                           // 3. Clean Card (Light Glassmversion)
-                          _buildGlassCard(context, !isDark, controller),
+                          _buildGlassCard(context, isDark, controller),
 
                           const SizedBox(height: 32),
 
                           // Terms & Privacy
-                          _buildModernTerms(!isDark),
+                          _buildModernTerms(isDark),
                         ],
                       ),
                     ),
@@ -277,7 +277,7 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen>
             onChanged: (value) {
               controller.countryCode.value = value.dialCode.toString();
             },
-            dialogBackgroundColor: !isDark
+            dialogBackgroundColor: isDark
                 ? AppColors.moroccoGreen.withOpacity(0.6)
                 : AppColors.background,
             initialSelection: controller.countryCode.value,

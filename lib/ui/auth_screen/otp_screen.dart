@@ -57,7 +57,7 @@ class _OtpScreenState extends State<OtpScreen>
       builder: (controller) {
         return Scaffold(
           backgroundColor:
-              !isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+              isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
           body: Stack(
             children: [
               // 1. Immersive Animated Background
@@ -68,7 +68,7 @@ class _OtpScreenState extends State<OtpScreen>
                     return CustomPaint(
                       painter: ModernMoroccanPainter(
                         scrollOffset: _backgroundController.value,
-                        isDark: !isDark,
+                        isDark: isDark,
                       ),
                     );
                   },
@@ -113,7 +113,7 @@ class _OtpScreenState extends State<OtpScreen>
                           style: GoogleFonts.outfit(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: !isDark ? Colors.white60 : Colors.black45,
+                            color: isDark ? Colors.white60 : Colors.black45,
                           ),
                         ),
                         Text(
@@ -128,7 +128,7 @@ class _OtpScreenState extends State<OtpScreen>
                         const SizedBox(height: 40),
 
                         // 3. Clean Card
-                        _buildGlassCard(context, !isDark, controller),
+                        _buildGlassCard(context, isDark, controller),
 
                         const SizedBox(height: 32),
 

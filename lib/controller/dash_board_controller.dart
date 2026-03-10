@@ -211,6 +211,12 @@ class DashBoardController extends GetxController {
     Get.back();
   }
 
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+    await Preferences.clearKeyData('userId');
+    Get.offAll(const LoginScreen());
+  }
+
   void setDrawerList() {
     if (driverUser.value.ownerId == null) {
       if (Constant.isSubscriptionModelApplied == true) {

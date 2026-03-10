@@ -72,7 +72,7 @@ class ButtonThem {
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
                 side: BorderSide(
-                  color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
+                  color: themeChange.getThem() ? AppColors.moroccoRed : AppColors.moroccoRed,
                 ),
               ),
             ),
@@ -92,7 +92,7 @@ class ButtonThem {
               Text(
                 title.toUpperCase(),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary, fontSize: txtSize, fontWeight: FontWeight.w600),
+                style: GoogleFonts.poppins(color: themeChange.getThem() ? AppColors.moroccoRed : AppColors.moroccoRed, fontSize: txtSize, fontWeight: FontWeight.w600),
               ),
             ],
           ),

@@ -7,7 +7,6 @@ import 'package:driver/controller/order_map_controller.dart';
 import 'package:driver/model/owner_user_model.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
-import 'package:driver/themes/text_field_them.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +34,7 @@ class OrderMapScreen extends StatelessWidget {
               elevation: 0,
               centerTitle: true,
               title: Text(
-                "Trip Details".tr,
+                "Ride Details".tr,
                 style: GoogleFonts.outfit(
                   color: AppColors.moroccoRed,
                   fontWeight: FontWeight.w700,
@@ -371,79 +370,78 @@ class OrderMapScreen extends StatelessWidget {
               onPress: () async {
                 // Implementation preserved from original code
                 if (controller.driverModel.value.ownerId == null) {
-                  if (double.parse(controller.amount.value.toString()) > 0) {
-                    if (controller.driverModel.value.subscriptionTotalOrders ==
-                        "-1") {
+                  // if (double.parse(controller.amount.value.toString()) > 0) {
+                  if (controller.driverModel.value.subscriptionTotalOrders ==
+                      "-1") {
+                    controller.acceptOrder();
+                  } else {
+                    if (Constant.isSubscriptionModelApplied == false &&
+                        Constant.adminCommission!.isEnabled == false) {
                       controller.acceptOrder();
                     } else {
-                      if (Constant.isSubscriptionModelApplied == false &&
-                          Constant.adminCommission!.isEnabled == false) {
-                        controller.acceptOrder();
-                      } else {
-                        if ((controller.driverModel.value
-                                        .subscriptionExpiryDate !=
-                                    null &&
-                                controller.driverModel.value
-                                        .subscriptionExpiryDate!
-                                        .toDate()
-                                        .isBefore(DateTime.now()) ==
-                                    false) ||
-                            controller.driverModel.value.subscriptionPlan
-                                    ?.expiryDay ==
-                                '-1') {
-                          if (controller
-                                  .driverModel.value.subscriptionTotalOrders !=
-                              '0') {
-                            controller.acceptOrder();
-                          } else {
-                            ShowToastDialog.showToast(
-                                "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
-                          }
+                      if ((controller.driverModel.value
+                                      .subscriptionExpiryDate !=
+                                  null &&
+                              controller
+                                      .driverModel.value.subscriptionExpiryDate!
+                                      .toDate()
+                                      .isBefore(DateTime.now()) ==
+                                  false) ||
+                          controller.driverModel.value.subscriptionPlan
+                                  ?.expiryDay ==
+                              '-1') {
+                        if (controller
+                                .driverModel.value.subscriptionTotalOrders !=
+                            '0') {
+                          controller.acceptOrder();
                         } else {
                           ShowToastDialog.showToast(
                               "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
                         }
+                      } else {
+                        ShowToastDialog.showToast(
+                            "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
                       }
                     }
-                  } else {
+                  }
+                  /*} else {
                     ShowToastDialog.showToast(
                         "Please enter valid offer rate".tr);
-                  }
+                  }*/
                 } else {
                   OwnerUserModel? ownerUserModel =
                       await FireStoreUtils.getOwnerProfile(
                           controller.driverModel.value.ownerId!);
-                  if (double.parse(controller.amount.value.toString()) > 0) {
-                    if (ownerUserModel?.subscriptionTotalOrders == "-1") {
+                  // if (double.parse(controller.amount.value.toString()) > 0) {
+                  if (ownerUserModel?.subscriptionTotalOrders == "-1") {
+                    controller.acceptOrder();
+                  } else {
+                    if (Constant.isSubscriptionModelApplied == false &&
+                        Constant.adminCommission!.isEnabled == false) {
                       controller.acceptOrder();
                     } else {
-                      if (Constant.isSubscriptionModelApplied == false &&
-                          Constant.adminCommission!.isEnabled == false) {
-                        controller.acceptOrder();
-                      } else {
-                        if ((ownerUserModel?.subscriptionExpiryDate != null &&
-                                ownerUserModel?.subscriptionExpiryDate!
-                                        .toDate()
-                                        .isBefore(DateTime.now()) ==
-                                    false) ||
-                            ownerUserModel?.subscriptionPlan?.expiryDay ==
-                                '-1') {
-                          if (ownerUserModel?.subscriptionTotalOrders != '0') {
-                            controller.acceptOrder();
-                          } else {
-                            ShowToastDialog.showToast(
-                                "Your order limit has reached their maximum order capacity. Please reach out to the owner.");
-                          }
+                      if ((ownerUserModel?.subscriptionExpiryDate != null &&
+                              ownerUserModel?.subscriptionExpiryDate!
+                                      .toDate()
+                                      .isBefore(DateTime.now()) ==
+                                  false) ||
+                          ownerUserModel?.subscriptionPlan?.expiryDay == '-1') {
+                        if (ownerUserModel?.subscriptionTotalOrders != '0') {
+                          controller.acceptOrder();
                         } else {
                           ShowToastDialog.showToast(
                               "Your order limit has reached their maximum order capacity. Please reach out to the owner.");
                         }
+                      } else {
+                        ShowToastDialog.showToast(
+                            "Your order limit has reached their maximum order capacity. Please reach out to the owner.");
                       }
                     }
-                  } else {
+                  }
+                  /*} else {
                     ShowToastDialog.showToast(
                         "Please enter valid offer rate".tr);
-                  }
+                  }*/
                 }
               },
             ),
@@ -583,7 +581,7 @@ class OrderMapScreen extends StatelessWidget {
       OrderMapController controller, DarkThemeProvider themeChange) {
     return Column(
       children: [
-        Row(
+        /*Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Minus Button
@@ -657,9 +655,8 @@ class OrderMapScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 15),
-        TextFieldThem.buildTextFiledWithPrefixIcon(
+        ),*/
+        /*TextFieldThem.buildTextFiledWithPrefixIcon(
           Get.context!,
           hintText: "Enter your bid...".tr,
           controller: controller.enterOfferRateController.value,
@@ -670,13 +667,11 @@ class OrderMapScreen extends StatelessWidget {
           onChanged: (value) {
             if (value.isEmpty) {
               controller.amount.value = 0.0;
+              controller.finalAmount.value = 0.0;
             } else {
-              controller.amount.value = double.tryParse(value) ?? 0.0;
-              controller.finalAmount.value = double.parse(value) +
-                  controller.totalChargeOfMinute.value +
-                  (double.parse(controller.orderModel.value.service?.prices
-                          ?.first.basicFareCharge ??
-                      '0.0'));
+              double val = double.tryParse(value) ?? 0.0;
+              controller.amount.value = val;
+              controller.finalAmount.value = val;
             }
           },
           prefix: Padding(
@@ -684,7 +679,7 @@ class OrderMapScreen extends StatelessWidget {
             child: Text(Constant.currencyModel!.symbol.toString(),
                 style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
           ),
-        ),
+        ),*/
       ],
     );
   }

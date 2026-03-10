@@ -4,6 +4,7 @@ import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/send_notification.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/active_order_controller.dart';
+import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/model/user_model.dart';
 import 'package:driver/themes/app_colors.dart';
@@ -29,6 +30,7 @@ class ActiveOrderScreen extends StatelessWidget {
 
     return GetBuilder<ActiveOrderController>(
         init: ActiveOrderController(),
+        global: true, // Ensuring it's globally accessible and stable
         builder: (controller) {
           return StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -324,13 +326,18 @@ class ActiveOrderScreen extends StatelessWidget {
                                           textColor: Colors.white,
                                           onPress: () async {
                                             showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        otpDialog(
-                                                            context,
-                                                            controller,
-                                                            orderModel));
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  OtpDialog(
+                                                orderModel: orderModel,
+                                                driverModel: controller
+                                                    .drivermodel.value,
+                                                onSuccess: () {
+                                                  controller.homeController
+                                                      .selectedIndex.value = 3;
+                                                },
+                                              ),
+                                            );
                                           },
                                         ),
                             ),
@@ -609,105 +616,183 @@ class ActiveOrderScreen extends StatelessWidget {
       ],
     );
   }
+}
 
-  otpDialog(BuildContext context, ActiveOrderController controller,
-      OrderModel orderModel) {
+class OtpDialog extends StatefulWidget {
+  final OrderModel orderModel;
+  final DriverUserModel? driverModel;
+  final VoidCallback onSuccess;
+
+  const OtpDialog({
+    super.key,
+    required this.orderModel,
+    required this.driverModel,
+    required this.onSuccess,
+  });
+
+  @override
+  State<OtpDialog> createState() => _OtpDialogState();
+}
+
+class _OtpDialogState extends State<OtpDialog> {
+  final TextEditingController _otpController = TextEditingController();
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
+    final bool isDark = themeChange.getThem();
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color:
+                isDark ? Colors.white10 : AppColors.moroccoRed.withOpacity(0.1),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Decorative Header Icon
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.moroccoRed.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.lock_person_rounded,
+                color: AppColors.moroccoRed,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
               "OTP Verification".tr,
               style: GoogleFonts.outfit(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: themeChange.getThem() ? Colors.white : Colors.black87,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
-              "Please enter the 6-digit code provided by the customer to start the ride."
-                  .tr,
+              "Get 6-digit OTP form the customer to start the ride.".tr,
+              textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
                 fontSize: 14,
-                color: themeChange.getThem() ? Colors.white60 : Colors.black54,
+                color: isDark ? Colors.white60 : Colors.black54,
+                height: 1.4,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 25),
-              child: PinCodeTextField(
-                length: 6,
-                appContext: context,
-                keyboardType: TextInputType.phone,
-                pinTheme: PinTheme(
-                  fieldHeight: 45,
-                  fieldWidth: 40,
-                  activeColor: AppColors.moroccoRed,
-                  selectedColor: AppColors.moroccoRed,
-                  inactiveColor: themeChange.getThem()
-                      ? Colors.white12
-                      : Colors.grey.withOpacity(0.2),
-                  activeFillColor: themeChange.getThem()
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.grey.withOpacity(0.05),
-                  inactiveFillColor: themeChange.getThem()
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.grey.withOpacity(0.05),
-                  selectedFillColor: AppColors.moroccoRed.withOpacity(0.05),
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                enableActiveFill: true,
-                cursorColor: AppColors.moroccoRed,
-                controller: controller.otpController.value,
-                onChanged: (value) {},
+            const SizedBox(height: 30),
+            PinCodeTextField(
+              length: 6,
+              appContext: context,
+              keyboardType: TextInputType.phone,
+              textStyle: GoogleFonts.outfit(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
               ),
+              pinTheme: PinTheme(
+                fieldHeight: 48,
+                fieldWidth: 40,
+                activeColor: AppColors.moroccoRed,
+                selectedColor: AppColors.moroccoRed,
+                inactiveColor:
+                    isDark ? Colors.white12 : Colors.grey.withOpacity(0.2),
+                activeFillColor: isDark
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.grey.withOpacity(0.05),
+                inactiveFillColor: isDark
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.grey.withOpacity(0.05),
+                selectedFillColor: AppColors.moroccoRed.withOpacity(0.05),
+                shape: PinCodeFieldShape.box,
+                borderRadius: BorderRadius.circular(12),
+                borderWidth: 1.5,
+              ),
+              enableActiveFill: true,
+              cursorColor: AppColors.moroccoRed,
+              controller: _otpController,
+              animationType: AnimationType.fade,
+              onChanged: (value) {},
             ),
+            const SizedBox(height: 30),
             ButtonThem.buildButton(
               context,
               title: "Verify & Start Ride".tr,
               bgColors: AppColors.moroccoRed,
               textColor: Colors.white,
               onPress: () async {
-                if (orderModel.otp.toString() ==
-                    controller.otpController.value.text) {
+                if (widget.orderModel.otp.toString() == _otpController.text) {
                   Get.back();
                   ShowToastDialog.showLoader("Please wait...".tr);
-                  orderModel.status = Constant.rideInProgress;
-                  await FireStoreUtils.getCustomer(orderModel.userId.toString())
+                  widget.orderModel.status = Constant.rideInProgress;
+
+                  await FireStoreUtils.getCustomer(
+                          widget.orderModel.userId.toString())
                       .then((value) async {
-                    if (value != null) {
+                    if (value != null && value.fcmToken != null) {
                       await SendNotification.sendOneNotification(
                           token: value.fcmToken.toString(),
                           title: 'Ride Started'.tr,
                           body:
-                              'The ride has officially started. Please follow the designated route to the destination.'
+                              'Your ride has officially started. Have a safe journey!'
                                   .tr,
                           payload: {});
                     }
                   });
-                  if (controller.drivermodel.value?.ownerId != null) {
-                    orderModel.ownerId = controller.drivermodel.value?.ownerId;
+
+                  if (widget.driverModel?.ownerId != null) {
+                    widget.orderModel.ownerId = widget.driverModel?.ownerId;
                   }
-                  await FireStoreUtils.setOrder(orderModel).then((value) {
+
+                  await FireStoreUtils.setOrder(widget.orderModel)
+                      .then((value) {
                     if (value == true) {
                       ShowToastDialog.closeLoader();
                       ShowToastDialog.showToast(
-                          "Customer pickup successfully".tr);
+                          "Customer pickup recognized successfully".tr);
+                      widget.onSuccess();
                     }
                   });
                 } else {
                   ShowToastDialog.showToast(
-                    "OTP Invalid".tr,
-                  );
+                      "Invalid OTP. Please try again.".tr);
                 }
               },
+            ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                "Cancel".tr,
+                style: GoogleFonts.outfit(
+                  color: isDark ? Colors.white38 : Colors.black38,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),

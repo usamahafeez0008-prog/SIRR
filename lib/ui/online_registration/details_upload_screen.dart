@@ -45,7 +45,7 @@ class _DetailsUploadScreenState extends State<DetailsUploadScreen>
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
-    final bool isDark = !themeChange.getThem();
+    final bool isDark = themeChange.getThem();
 
     return GetX<DetailsUploadController>(
       init: DetailsUploadController(),
@@ -613,7 +613,7 @@ class _DetailsUploadScreenState extends State<DetailsUploadScreen>
   buildBottomSheet(
       BuildContext context, DetailsUploadController controller, String type) {
     final bool isDark =
-        !Provider.of<DarkThemeProvider>(context, listen: false).getThem();
+        Provider.of<DarkThemeProvider>(context, listen: false).getThem();
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

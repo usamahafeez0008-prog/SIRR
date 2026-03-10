@@ -47,7 +47,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen>
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
-    final bool isDark = !themeChange.getThem();
+    final bool isDark = themeChange.getThem();
 
     return GetX<VehicleInformationController>(
       init: VehicleInformationController(),

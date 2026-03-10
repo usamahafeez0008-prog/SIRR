@@ -29,7 +29,7 @@ class DashBoardScreen extends StatelessWidget {
           return Scaffold(
             drawerEnableOpenDragGesture: false,
             backgroundColor:
-                !isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FB),
+                isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FB),
             appBar: AppBar(
               toolbarHeight: 70,
               elevation: 0,
@@ -39,7 +39,7 @@ class DashBoardScreen extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: IconButton(
-                    onPressed: () => Scaffold.of(context).openDrawer(),
+                    onPressed: () => _showLogoutDialog(context, controller),
                     icon: SvgPicture.asset(
                       'assets/icons/ic_humber.svg',
                       color: Colors.white,
@@ -331,6 +331,131 @@ class DashBoardScreen extends StatelessWidget {
                         ),
                         child: Text(
                           'Yes'.tr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showLogoutDialog(
+      BuildContext context, DashBoardController controller) async {
+    final themeChange = Provider.of<DarkThemeProvider>(context, listen: false);
+    final bool isDark = themeChange.getThem();
+
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white12
+                    : AppColors.moroccoRed.withOpacity(0.1),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.moroccoRed.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: AppColors.moroccoRed,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Sign Out'.tr,
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Are you sure you want to sign out ?'.tr,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(
+                            color: isDark ? Colors.white38 : Colors.black26,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel'.tr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white70 : Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.back(); // close dialog
+                          controller.signOut();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.moroccoRed,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          'Log Out'.tr,
                           style: GoogleFonts.outfit(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

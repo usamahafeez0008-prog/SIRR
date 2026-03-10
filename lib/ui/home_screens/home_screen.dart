@@ -65,23 +65,18 @@ class HomeScreen extends StatelessWidget {
                                 controller,
                                 0,
                                 'New'.tr,
-                                const Icon(Icons.explore_rounded, size: 20),
                               ),
                               _buildPill(
                                 context,
                                 controller,
                                 1,
                                 'Accepted'.tr,
-                                const Icon(Icons.check_circle_outline_rounded,
-                                    size: 20),
                               ),
                               _buildPill(
                                 context,
                                 controller,
                                 2,
                                 'Active'.tr,
-                                const Icon(Icons.directions_car_rounded,
-                                    size: 20),
                                 badgeCount: controller.isActiveValue.value,
                               ),
                               _buildPill(
@@ -89,7 +84,6 @@ class HomeScreen extends StatelessWidget {
                                 controller,
                                 3,
                                 'Completed'.tr,
-                                const Icon(Icons.history_rounded, size: 20),
                               ),
                             ],
                           ),
@@ -194,8 +188,7 @@ class HomeScreen extends StatelessWidget {
     BuildContext context,
     HomeController controller,
     int index,
-    String label,
-    Widget icon, {
+    String label, {
     int badgeCount = 0,
   }) {
     final bool isSelected = controller.selectedIndex.value == index;
@@ -207,7 +200,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
             color: isSelected ? Colors.white : Colors.white.withOpacity(0.12),
             borderRadius: BorderRadius.circular(30),
@@ -225,14 +218,13 @@ class HomeScreen extends StatelessWidget {
                   ]
                 : [],
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (badgeCount > 0)
-                badges.Badge(
+          child: badgeCount > 0
+              ? badges.Badge(
+                  position: badges.BadgePosition.topEnd(top: -12, end: -12),
                   badgeStyle: const badges.BadgeStyle(
                     badgeColor: Colors.red,
-                    padding: EdgeInsets.all(4),
+                    padding: EdgeInsets.all(5),
+                    elevation: 2,
                   ),
                   badgeContent: Text(
                     badgeCount.toString(),
@@ -241,32 +233,21 @@ class HomeScreen extends StatelessWidget {
                         fontSize: 9,
                         fontWeight: FontWeight.bold),
                   ),
-                  child: IconTheme(
-                    data: IconThemeData(
-                      color: isSelected ? AppColors.moroccoRed : Colors.white,
-                    ),
-                    child: icon,
-                  ),
+                  child: _buildPillText(label, isSelected),
                 )
-              else
-                IconTheme(
-                  data: IconThemeData(
-                    color: isSelected ? AppColors.moroccoRed : Colors.white,
-                  ),
-                  child: icon,
-                ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: GoogleFonts.outfit(
-                  color: isSelected ? AppColors.moroccoRed : Colors.white,
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
+              : _buildPillText(label, isSelected),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPillText(String label, bool isSelected) {
+    return Text(
+      label,
+      style: GoogleFonts.outfit(
+        color: isSelected ? AppColors.moroccoRed : Colors.white,
+        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+        fontSize: 14,
       ),
     );
   }

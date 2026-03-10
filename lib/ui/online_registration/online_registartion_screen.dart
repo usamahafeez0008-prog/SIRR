@@ -50,7 +50,7 @@ class _OnlineRegistrationScreenState extends State<OnlineRegistrationScreen>
       builder: (controller) {
         return Scaffold(
           backgroundColor:
-              !isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+              isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
           body: Stack(
             children: [
               // Animated Moroccan background
@@ -105,7 +105,7 @@ class _OnlineRegistrationScreenState extends State<OnlineRegistrationScreen>
 
                                       return _buildDocumentCard(
                                         context,
-                                        !isDark,
+                                        isDark,
                                         documentModel,
                                         documents,
                                       );
@@ -148,14 +148,14 @@ class _OnlineRegistrationScreenState extends State<OnlineRegistrationScreen>
                         : Colors.white.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: !isDark ? Colors.white12 : Colors.white,
+                      color: isDark ? Colors.white12 : Colors.white,
                       width: 1,
                     ),
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new,
                     size: 18,
-                    color: !isDark ? Colors.white : Colors.black87,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
               ),

@@ -11,7 +11,8 @@ class LocationView extends StatelessWidget {
   final String? sourceLocation;
   final String? destinationLocation;
 
-  const LocationView({super.key, this.sourceLocation, this.destinationLocation});
+  const LocationView(
+      {super.key, this.sourceLocation, this.destinationLocation});
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +23,29 @@ class LocationView extends StatelessWidget {
       children: [
         Column(
           children: [
-            SvgPicture.asset(themeChange.getThem() ? 'assets/icons/ic_source_dark.svg' : 'assets/icons/ic_source.svg', width: 18),
-            Dash(direction: Axis.vertical, length: Responsive.height(5, context), dashLength: 12, dashColor: AppColors.dottedDivider),
+            SvgPicture.asset(
+                themeChange.getThem()
+                    ? 'assets/icons/ic_source_dark.svg'
+                    : 'assets/icons/ic_source.svg',
+                width: 18),
+            Dash(
+                direction: Axis.vertical,
+                length: Responsive.height(5, context),
+                dashLength: 12,
+                dashColor: AppColors.dottedDivider),
             Container(
               decoration: BoxDecoration(
-                color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
+                color: themeChange.getThem()
+                    ? AppColors.darksecondprimary
+                    : AppColors.lightsecondprimary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: SvgPicture.asset(
                 'assets/icons/ic_destination.svg',
                 width: 20,
-                color: themeChange.getThem() ? AppColors.containerBackground : AppColors.darkContainerBackground,
+                color: themeChange.getThem()
+                    ? AppColors.containerBackground
+                    : AppColors.darkContainerBackground,
               ),
             ),
           ],
@@ -44,9 +57,14 @@ class LocationView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(sourceLocation.toString(), maxLines: 2, style: GoogleFonts.poppins()),
+              Text(sourceLocation.toString(),
+                  maxLines: 2, style: GoogleFonts.poppins()),
               SizedBox(
-                  height: calculateLineWraps(text: sourceLocation.toString(), textStyle: TextStyle(), maxWidth: Responsive.width(80, context)) == 2
+                  height: calculateLineWraps(
+                              text: sourceLocation.toString(),
+                              textStyle: TextStyle(),
+                              maxWidth: Responsive.width(80, context)) ==
+                          2
                       ? Responsive.height(2.2, context)
                       : Responsive.height(4.4, context)),
               Text(
