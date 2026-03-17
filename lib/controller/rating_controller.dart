@@ -14,6 +14,7 @@ class RatingController extends GetxController {
 
   Rx<ReviewModel> reviewModel = ReviewModel().obs;
   Rx<UserModel> userModel = UserModel().obs;
+  RxList<String> selectedTags = <String>[].obs;
 
   @override
   void onInit() {

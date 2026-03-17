@@ -15,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class ReviewScreen extends StatelessWidget {
+  // UI for rating and reviewing customers
   const ReviewScreen({super.key});
 
   @override
@@ -196,11 +197,73 @@ class ReviewScreen extends StatelessWidget {
                                         controller.rating(rating);
                                       },
                                     ),
-                                    const SizedBox(height: 30),
+                                    const SizedBox(height: 24),
+
+                                    // Review Tags
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      alignment: WrapAlignment.center,
+                                      children: [
+                                        'Polite',
+                                        'On time',
+                                        'Friendly',
+                                        'Easy location',
+                                        'Rude',
+                                        'Late',
+                                        'Attempt Fraud',
+                                      ].map((tag) {
+                                        bool isSelected = controller.selectedTags.contains(tag);
+                                        return InkWell(
+                                          onTap: () {
+                                            if (isSelected) {
+                                              controller.selectedTags.remove(tag);
+                                            } else {
+                                              controller.selectedTags.add(tag);
+                                            }
+                                          },
+                                          borderRadius: BorderRadius.circular(20),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? AppColors.moroccoRed
+                                                  : (isDark
+                                                      ? Colors.white10
+                                                      : Colors.grey[100]),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? AppColors.moroccoRed
+                                                    : (isDark
+                                                        ? Colors.white24
+                                                        : Colors.grey[200]!),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              tag.tr,
+                                              style: GoogleFonts.outfit(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: isSelected
+                                                    ? Colors.white
+                                                    : (isDark
+                                                        ? Colors.white70
+                                                        : Colors.black54),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+
+                                    const SizedBox(height: 24),
                                     TextField(
                                       controller:
                                           controller.commentController.value,
-                                      maxLines: 4,
+                                      maxLines: 2,
                                       style: GoogleFonts.outfit(
                                           color: isDark
                                               ? Colors.white
@@ -255,15 +318,13 @@ class ReviewScreen extends StatelessWidget {
                                 bgColors: AppColors.moroccoGreen,
                                 textColor: Colors.white,
                                 onPress: () async {
-                                  if (controller.rating.value > 0 &&
-                                      controller.commentController.value.text
-                                          .isNotEmpty) {
+                                  if (controller.rating.value > 0) {
                                     ShowToastDialog.showLoader(
                                         "Submitting Feedback...".tr);
 
                                     await FireStoreUtils.getCustomer(controller
                                                     .type.value ==
-                                                "orderModel"
+                                                 "orderModel"
                                             ? controller.orderModel.value.userId
                                                 .toString()
                                             : controller.intercityOrderModel
@@ -278,15 +339,15 @@ class ReviewScreen extends StatelessWidget {
                                           userModel.reviewsSum = (double.parse(
                                                       userModel.reviewsSum
                                                           .toString()) -
-                                                  double.parse(controller
-                                                      .reviewModel.value.rating
-                                                      .toString()))
+                                                   double.parse(controller
+                                                       .reviewModel.value.rating
+                                                       .toString()))
                                               .toString();
                                           userModel.reviewsCount =
                                               (double.parse(userModel
-                                                          .reviewsCount
-                                                          .toString()) -
-                                                      1)
+                                                           .reviewsCount
+                                                           .toString()) -
+                                                       1)
                                                   .toString();
                                         }
                                         userModel.reviewsSum = (double.parse(
@@ -311,8 +372,11 @@ class ReviewScreen extends StatelessWidget {
                                             ? controller.orderModel.value.id
                                             : controller
                                                 .intercityOrderModel.value.id;
-                                    controller.reviewModel.value.comment =
-                                        controller.commentController.value.text;
+                                    
+                                    String tagsText = controller.selectedTags.join(", ");
+                                    controller.reviewModel.value.comment = 
+                                        "${tagsText.isNotEmpty ? "[$tagsText] " : ""}${controller.commentController.value.text}";
+                                    
                                     controller.reviewModel.value.rating =
                                         controller.rating.value.toString();
                                     controller.reviewModel.value.customerId =
@@ -342,12 +406,11 @@ class ReviewScreen extends StatelessWidget {
                                     });
                                   } else {
                                     ShowToastDialog.showToast(
-                                        "Please provide a rating and comment."
-                                            .tr);
+                                        "Please provide a rating.".tr);
                                   }
                                 },
                               ),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 70),
                             ],
                           ),
                         ),

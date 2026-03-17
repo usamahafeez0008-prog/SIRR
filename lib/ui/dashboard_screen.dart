@@ -6,7 +6,7 @@ import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/dash_board_controller.dart';
 import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
+
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/ui/online_registration/online_registartion_screen.dart';
@@ -32,7 +32,7 @@ class DashBoardScreen extends StatelessWidget {
             backgroundColor:
                 isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FB),
             appBar: AppBar(
-              toolbarHeight: 70,
+              toolbarHeight: 60,
               elevation: 0,
               backgroundColor: AppColors.moroccoRed,
               centerTitle: true,
@@ -40,85 +40,96 @@ class DashBoardScreen extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: IconButton(
-                    onPressed: () => Scaffold.of(context).openDrawer(), //_showLogoutDialog(context, controller),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
                     icon: SvgPicture.asset(
                       'assets/icons/ic_humber.svg',
                       color: Colors.white,
-                      width: 20,
+                      width: 22,
                     ),
                   ),
                 );
               }),
-              title: controller.selectedDrawerIndex.value == 0
-                  ? StreamBuilder(
+              title: Text(
+                controller
+                    .drawerItems[controller.selectedDrawerIndex.value].title.tr,
+                style: GoogleFonts.outfit(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(40),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0),
+                  child: StreamBuilder(
                       stream: FireStoreUtils.fireStore
                           .collection(CollectionName.driverUsers)
                           .doc(FireStoreUtils.getCurrentUid())
                           .snapshots(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasError) return Text('Error'.tr);
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Constant.loader(isDarkTheme: isDark);
+                        if (snapshot.hasError ||
+                            !snapshot.hasData ||
+                            snapshot.data?.data() == null) {
+                          return const SizedBox.shrink();
                         }
 
                         DriverUserModel driverModel =
                             DriverUserModel.fromJson(snapshot.data!.data()!);
 
-                        // Custom Premium Toggle Button
+                        // Premium Glassmorphic Toggle Button
                         return Container(
-                          width: Responsive.width(52, context),
+                          width: 160,
                           height: 42,
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: Colors.black26,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            color: Colors.black.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.12),
+                              width: 1.2,
+                            ),
                           ),
                           child: Stack(
                             children: [
-                              // Sliding active background
+                              // Sliding transition background
                               AnimatedAlign(
                                 alignment: Alignment(
                                     driverModel.isOnline == true ? -1 : 1, 0),
                                 duration: const Duration(milliseconds: 350),
-                                curve: Curves.easeOutCubic,
+                                curve: Curves.easeInOutExpo,
                                 child: Container(
-                                  width: Responsive.width(24.5, context),
+                                  width: 76,
                                   height: 36,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
                                       colors: driverModel.isOnline == true
                                           ? [
                                               AppColors.moroccoGreen,
-                                              const Color(0xFF2A9D5B)
+                                              const Color(0xFF2BC16E)
                                             ]
                                           : [
-                                              const Color(0xFFE5E5E5),
-                                              Colors.white
+                                              const Color(0xFFFDFDFD),
+                                              const Color(0xFFD1D1D1)
                                             ],
                                     ),
                                     borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
-                                      BoxShadow(
-                                        color: driverModel.isOnline == true
-                                            ? AppColors.moroccoGreen
-                                                .withOpacity(0.4)
-                                            : Colors.black12,
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
+                                      if (driverModel.isOnline == true)
+                                        BoxShadow(
+                                          color: AppColors.moroccoGreen
+                                              .withOpacity(0.4),
+                                          blurRadius: 10,
+                                          spreadRadius: 1,
+                                        ),
                                     ],
                                   ),
                                 ),
                               ),
-                              // Interactive buttons
+                              // Interactive options
                               Row(
                                 children: [
                                   // Online Option
@@ -153,9 +164,9 @@ class DashBoardScreen extends StatelessWidget {
                                           style: GoogleFonts.outfit(
                                             color: driverModel.isOnline == true
                                                 ? Colors.white
-                                                : Colors.white60,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13,
+                                                : Colors.white.withOpacity(0.6),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12,
                                           ),
                                         ),
                                       ),
@@ -180,9 +191,9 @@ class DashBoardScreen extends StatelessWidget {
                                           style: GoogleFonts.outfit(
                                             color: driverModel.isOnline == false
                                                 ? AppColors.moroccoRed
-                                                : Colors.white60,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13,
+                                                : Colors.white.withOpacity(0.6),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12,
                                           ),
                                         ),
                                       ),
@@ -193,18 +204,12 @@ class DashBoardScreen extends StatelessWidget {
                             ],
                           ),
                         );
-                      })
-                  : Text(
-                      controller
-                          .drawerItems[controller.selectedDrawerIndex.value]
-                          .title
-                          .tr,
-                      style: GoogleFonts.outfit(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 19,
-                      ),
-                    ),
+                      }),
+                ),
+              ),
+              actions: const [
+                SizedBox(width: 56), // Balancing leading button width
+              ],
             ),
             drawer: buildAppDrawer(context, controller),
             body: WillPopScope(
@@ -523,7 +528,7 @@ class DashBoardScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                   SvgPicture.asset(
+                  SvgPicture.asset(
                     d.icon,
                     width: 18,
                     color: isSelected
@@ -623,7 +628,8 @@ class DashBoardScreen extends StatelessWidget {
                               StreamBuilder<QuerySnapshot>(
                                 stream: FireStoreUtils.fireStore
                                     .collection('review_driver')
-                                    .where('driverId', isEqualTo: driverModel.id)
+                                    .where('driverId',
+                                        isEqualTo: driverModel.id)
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   double rating = 0.0;
@@ -663,7 +669,8 @@ class DashBoardScreen extends StatelessWidget {
                                 "Verified account".tr,
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
-                                  color: isDark ? Colors.white54 : Colors.black54,
+                                  color:
+                                      isDark ? Colors.white54 : Colors.black54,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -687,7 +694,7 @@ class DashBoardScreen extends StatelessWidget {
           ),
 
           // ── Version App Info (Bottom) ──
-         /* Padding(
+          /* Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
               "App Version v 1.0".tr,
@@ -698,7 +705,9 @@ class DashBoardScreen extends StatelessWidget {
               ),
             ),
           ),*/
-          SizedBox(height: 40,)
+          SizedBox(
+            height: 40,
+          )
         ],
       ),
     );

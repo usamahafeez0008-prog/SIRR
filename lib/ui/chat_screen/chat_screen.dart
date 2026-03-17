@@ -168,6 +168,7 @@ class _ChatScreensState extends State<ChatScreens> {
                     }),
               ),
             ),
+            _buildPredefinedMessages(themeChange),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
@@ -456,6 +457,52 @@ class _ChatScreensState extends State<ChatScreens> {
       );
     }
     return const SizedBox.shrink();
+  }
+
+  Widget _buildPredefinedMessages(DarkThemeProvider themeChange) {
+    final List<String> predefinedMessages = ['I\'m Coming', 'I\'m Here', 'I\'m looking for you', 'Traffic jams', 'Ok'];
+
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: predefinedMessages.length,
+        itemBuilder: (context, index) {
+          final message = predefinedMessages[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: InkWell(
+              onTap: () {
+                _sendMessage(message, null, '', 'text');
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: (themeChange.getThem() ? AppColors.darkTextField : AppColors.moroccoRed.withOpacity(0.08)),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.moroccoRed.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  message.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: themeChange.getThem() ? Colors.white : AppColors.moroccoRed,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Future<void> _sendMessage(String message, Url? url, String videoThumbnail, String messageType, {int? voiceTimer}) async {
