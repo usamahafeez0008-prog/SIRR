@@ -2,15 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/wallet_controller.dart';
-import 'package:driver/model/intercity_order_model.dart';
-import 'package:driver/model/order_model.dart';
+// import 'package:driver/model/intercity_order_model.dart';
+// import 'package:driver/model/order_model.dart';
 import 'package:driver/model/wallet_transaction_model.dart';
 import 'package:driver/model/withdraw_model.dart';
 import 'package:driver/payment/createRazorPayOrderModel.dart';
 import 'package:driver/payment/rozorpayConroller.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
-import 'package:driver/themes/responsive.dart';
+// import 'package:driver/themes/responsive.dart';
 import 'package:driver/themes/text_field_them.dart';
 import 'package:driver/ui/order_intercity_screen/complete_intecity_order_screen.dart';
 import 'package:driver/ui/order_screen/complete_order_screen.dart';
@@ -31,187 +31,262 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
+    final bool isDark = themeChange.getThem();
 
     return GetX<WalletController>(
         init: WalletController(),
         builder: (controller) {
           return Scaffold(
-            backgroundColor: AppColors.lightprimary,
+            backgroundColor: isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+/*            appBar: AppBar(
+              backgroundColor: isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+              elevation: 0,
+              centerTitle: true,
+              leading: InkWell(
+                onTap: () => Get.back(),
+                child: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : AppColors.moroccoRed, size: 20),
+              ),
+              title: Text(
+                "My Wallet".tr,
+                style: GoogleFonts.outfit(
+                  color: isDark ? Colors.white : AppColors.moroccoRed,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                ),
+              ),
+            ),*/
             body: controller.isLoading.value
-                ? Constant.loader(isDarkTheme: themeChange.getThem())
+                ? Constant.loader(isDarkTheme: isDark)
                 : Column(
                     children: [
-                      Container(
-                        height: Responsive.width(24, context),
-                        width: Responsive.width(100, context),
-                        color: AppColors.lightprimary,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                      // ── Premium Balance Card ──
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [AppColors.moroccoRed, AppColors.moroccoRed.withOpacity(0.8)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.moroccoRed.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Total Balance".tr,
-                                      style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Total Balance".tr,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    Text(
-                                      Constant.amountShow(amount: controller.driverUserModel.value.walletAmount.toString()),
-                                      style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 24),
-                                    ),
-                                  ],
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/icons/ic_wallet.svg',
+                                    width: 24,
+                                    color: Colors.white.withOpacity(0.5),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                Constant.amountShow(amount: controller.driverUserModel.value.walletAmount.toString()),
+                                style: GoogleFonts.outfit(
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
-                              Transform.translate(
-                                offset: const Offset(0, -22),
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    paymentMethodDialog(context, controller);
-                                  },
-                                  height: 40,
-                                  elevation: 0.5,
-                                  minWidth: 0.40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
-                                  child: Text(
-                                    "Topup Wallet".tr.toUpperCase(),
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                                  ),
+                              const SizedBox(height: 24),
+                              MaterialButton(
+                                onPressed: () => ShowToastDialog.showToast("Payment Method Coming Soon"), //paymentMethodDialog(context, controller),
+                                height: 48,
+                                minWidth: double.infinity,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                color: Colors.white,
+                                elevation: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add_circle_outline, color: AppColors.moroccoRed, size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      "Topup Wallet".tr,
+                                      style: GoogleFonts.outfit(
+                                        color: AppColors.moroccoRed,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
+
+                      // ── Transaction Header ──
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Recent Transactions".tr,
+                              style: GoogleFonts.outfit(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? Colors.white : AppColors.moroccoText,
+                              ),
+                            ),
+                            Text(
+                              "View All".tr,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.moroccoRed,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // ── Transaction List ──
                       Expanded(
                         child: Container(
-                          decoration:
-                              BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: controller.transactionList.isEmpty
-                                ? Center(child: Text("No transaction found".tr))
-                                : ListView.builder(
-                                    itemCount: controller.transactionList.length,
-                                    itemBuilder: (context, index) {
-                                      WalletTransactionModel walletTransactionModel = controller.transactionList[index];
-                                      return InkWell(
-                                        splashColor: Colors.transparent,
-                                        onTap: () async {
-                                          if (walletTransactionModel.note != 'Referral Amount') {
-                                            if (walletTransactionModel.orderType == "city") {
-                                              await FireStoreUtils.getOrder(walletTransactionModel.transactionId.toString()).then((value) {
-                                                if (value != null) {
-                                                  OrderModel orderModel = value;
-                                                  Get.to(const CompleteOrderScreen(), arguments: {
-                                                    "orderModel": orderModel,
-                                                  });
-                                                }
-                                              });
-                                            } else if (walletTransactionModel.orderType == "intercity") {
-                                              await FireStoreUtils.getInterCityOrder(walletTransactionModel.transactionId.toString()).then((value) {
-                                                if (value != null) {
-                                                  InterCityOrderModel orderModel = value;
-                                                  Get.to(const CompleteIntercityOrderScreen(), arguments: {
-                                                    "orderModel": orderModel,
-                                                  });
-                                                }
-                                              });
-                                            } else {
-                                              showTransactionDetails(context: context, walletTransactionModel: walletTransactionModel);
-                                            }
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Container(
-                                              decoration: BoxDecoration(
-                                                color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                                                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
-                                                boxShadow: themeChange.getThem()
-                                                    ? null
-                                                    : [
-                                                        BoxShadow(
-                                                          color: Colors.grey.withOpacity(0.5),
-                                                          blurRadius: 8,
-                                                          offset: const Offset(0, 2), // changes position of shadow
-                                                        ),
-                                                      ],
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                        decoration: BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.circular(50)),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(12.0),
-                                                          child: SvgPicture.asset(
-                                                            'assets/icons/ic_wallet.svg',
-                                                            width: 24,
-                                                            color: Colors.black,
-                                                          ),
-                                                        )),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child: Text(
-                                                                  Constant.dateAndTimeFormatTimestamp(walletTransactionModel.createdDate),
-                                                                  style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                "${Constant.IsNegative(double.parse(walletTransactionModel.amount.toString())) ? "(-" : "+"}${Constant.amountShow(amount: walletTransactionModel.amount.toString().replaceAll("-", ""))}${Constant.IsNegative(double.parse(walletTransactionModel.amount.toString())) ? ")" : ""}",
-                                                                style: GoogleFonts.poppins(
-                                                                    fontWeight: FontWeight.w600,
-                                                                    color: Constant.IsNegative(double.parse(walletTransactionModel.amount.toString())) ? Colors.red : Colors.green),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Text(
-                                                            walletTransactionModel.note.toString(),
-                                                            style: GoogleFonts.poppins(fontWeight: FontWeight.w400),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                          margin: const EdgeInsets.only(top: 8),
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.darkContainerBackground : Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32),
+                            ),
                           ),
+                          child: controller.transactionList.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    "No transaction found".tr,
+                                    style: GoogleFonts.outfit(color: Colors.grey),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 80),
+                                  itemCount: controller.transactionList.length,
+                                  itemBuilder: (context, index) {
+                                    WalletTransactionModel walletTransactionModel = controller.transactionList[index];
+                                    bool isNegative = Constant.IsNegative(double.parse(walletTransactionModel.amount.toString()));
+
+                                    return InkWell(
+                                      onTap: () async {
+                                        if (walletTransactionModel.note != 'Referral Amount') {
+                                          if (walletTransactionModel.orderType == "city") {
+                                            await FireStoreUtils.getOrder(walletTransactionModel.transactionId.toString()).then((value) {
+                                              if (value != null) {
+                                                Get.to(const CompleteOrderScreen(), arguments: {"orderModel": value});
+                                              }
+                                            });
+                                          } else if (walletTransactionModel.orderType == "intercity") {
+                                            await FireStoreUtils.getInterCityOrder(walletTransactionModel.transactionId.toString()).then((value) {
+                                              if (value != null) {
+                                                Get.to(const CompleteIntercityOrderScreen(), arguments: {"orderModel": value});
+                                              }
+                                            });
+                                          } else {
+                                            showTransactionDetails(context: context, walletTransactionModel: walletTransactionModel);
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(bottom: 12),
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? const Color(0xFF252525) : AppColors.moroccoBackground,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: isNegative
+                                                    ? Colors.red.withOpacity(0.1)
+                                                    : Colors.green.withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                isNegative ? Icons.arrow_upward : Icons.arrow_downward,
+                                                color: isNegative ? Colors.red : Colors.green,
+                                                size: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    walletTransactionModel.note.toString(),
+                                                    style: GoogleFonts.outfit(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 15,
+                                                      color: isDark ? Colors.white : AppColors.moroccoText,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    Constant.dateAndTimeFormatTimestamp(walletTransactionModel.createdDate),
+                                                    style: GoogleFonts.outfit(
+                                                      fontSize: 12,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Text(
+                                              "${isNegative ? "-" : "+"}${Constant.amountShow(amount: walletTransactionModel.amount.toString().replaceAll("-", ""))}",
+                                              style: GoogleFonts.outfit(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: isNegative ? Colors.red : Colors.green,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                         ),
                       ),
                     ],
                   ),
-            bottomNavigationBar: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
-                    child: ButtonThem.buildBorderButton(
-                      context,
-                      title: "withdraw".tr,
-                      onPress: () async {
+                    child: MaterialButton(
+                      onPressed: () async {
                         if (double.parse(controller.driverUserModel.value.walletAmount.toString()) <= 0) {
                           ShowToastDialog.showToast("Insufficient balance".tr);
                         } else {
@@ -221,25 +296,46 @@ class WalletScreen extends StatelessWidget {
                             if (value == true) {
                               withdrawAmountBottomSheet(context, controller);
                             } else {
-                              ShowToastDialog.showToast("Your bank details is not available.Please add bank details".tr);
+                              ShowToastDialog.showToast("Your bank details is not available. Please add bank details".tr);
                             }
                           });
                         }
                       },
+                      height: 56,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        side: BorderSide(color: AppColors.moroccoRed.withOpacity(0.5)),
+                      ),
+                      color: isDark ? Colors.white10 : Colors.white,
+                      elevation: 0,
+                      child: Text(
+                        "Withdraw".tr,
+                        style: GoogleFonts.outfit(
+                          color: AppColors.moroccoRed,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: ButtonThem.buildButton(
-                      context,
-                      title: "Withdrawal history".tr,
-                      onPress: () {
-                        Get.to(const WithDrawHistoryScreen());
-                      },
+                    child: MaterialButton(
+                      onPressed: () => Get.to(const WithDrawHistoryScreen()),
+                      height: 56,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      color: AppColors.moroccoRed,
+                      elevation: 4,
+                      child: Text(
+                        "History".tr,
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -312,7 +408,8 @@ class WalletScreen extends StatelessWidget {
                                   "Select Payment Option".tr,
                                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                                 ),
-                                Visibility(
+
+                              /*  Visibility(
                                   visible: controller.paymentModel.value.strip!.enable == true,
                                   child: Obx(
                                     () => Column(
@@ -970,7 +1067,7 @@ class WalletScreen extends StatelessWidget {
                                           ),
                                         ],
                                       )
-                                    : const SizedBox(),
+                                    : const SizedBox(),*/
                               ],
                             ),
                           ),

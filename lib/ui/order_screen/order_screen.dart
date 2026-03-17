@@ -59,7 +59,7 @@ class OrderScreen extends StatelessWidget {
                             itemCount: snapshot.data!.docs.length,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom:40),
                             itemBuilder: (context, index) {
                               OrderModel orderModel = OrderModel.fromJson(
                                   snapshot.data!.docs[index].data()
@@ -417,12 +417,16 @@ class OrderScreen extends StatelessWidget {
                         else
                           _buildPaymentStatusIndicator(
                               orderModel.paymentStatus == true, isDark),
+
+
                       ],
                     ),
                   ),
                 ],
+
               ),
             ),
+
           ),
         );
       },

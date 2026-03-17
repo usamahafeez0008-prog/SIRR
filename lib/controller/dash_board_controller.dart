@@ -1,17 +1,16 @@
-import 'dart:developer';
-
+// import 'dart:developer';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/ui/auth_screen/login_screen.dart';
 import 'package:driver/ui/bank_details/bank_details_screen.dart';
-import 'package:driver/ui/chat_screen/inbox_screen.dart';
-import 'package:driver/ui/freight/freight_screen.dart';
-import 'package:driver/ui/help_support_screen/help_support_screen.dart';
-import 'package:driver/ui/intercity_screen/home_intercity_screen.dart';
+// import 'package:driver/ui/chat_screen/inbox_screen.dart';
+// import 'package:driver/ui/freight/freight_screen.dart';
+// import 'package:driver/ui/help_support_screen/help_support_screen.dart';
+// import 'package:driver/ui/intercity_screen/home_intercity_screen.dart';
 import 'package:driver/ui/online_registration/online_registartion_screen.dart';
 import 'package:driver/ui/profile_screen/profile_screen.dart';
-import 'package:driver/ui/refer_and_earn/refer_and_earn_screen.dart';
+// import 'package:driver/ui/refer_and_earn/refer_and_earn_screen.dart';
 import 'package:driver/ui/settings_screen/setting_screen.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_history.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
@@ -30,7 +29,7 @@ import '../ui/home_screens/home_screen.dart';
 class DashBoardController extends GetxController {
   RxList<DrawerItem> drawerItems = <DrawerItem>[].obs;
 
-  Widget getDrawerItemWidget(int pos) {
+  /* Widget getDrawerItemWidget(int pos) {
     log("driverUser.value.ownerId :::: ${driverUser.value.ownerId}");
     if (driverUser.value.ownerId == null) {
       if (Constant.isSubscriptionModelApplied == true) {
@@ -177,9 +176,41 @@ class DashBoardController extends GetxController {
           return const Text("Error");
       }
     }
+  } */
+
+  Widget getDrawerItemWidget(int pos) {
+    // Mapping based on the new structure
+    switch (pos) {
+      case 1: // Home
+        return const HomeScreen(initialIndex: 0);
+      case 2: // Trips in progress
+        return const HomeScreen(initialIndex: 2);
+      case 3: // Trip history
+        return const HomeScreen(initialIndex: 3);
+      case 4: // Plans
+        return const SubscriptionListScreen();
+      case 5: // Plans History
+        return const SubscriptionHistory();
+      case 7: // My Wallet
+        return const WalletScreen();
+      case 8: // Profile
+        return const ProfileScreen();
+      case 9: // Vehicle Information
+        if (Constant.isVerifyDocument == true) {
+          return const OnlineRegistrationScreen();
+        } else {
+          return const VehicleInformationScreen();
+        }
+      case 10: // Bank Details
+        return const BankDetailsScreen();
+      case 16: // Settings
+        return const SettingScreen();
+      default:
+        return const HomeScreen();
+    }
   }
 
-  Future<void> onSelectItem(int index) async {
+  /* Future<void> onSelectItem(int index) async {
     if (driverUser.value.ownerId == null) {
       if (Constant.isSubscriptionModelApplied == true) {
         if (Constant.isVerifyDocument == true ? index == 14 : index == 13) {
@@ -209,6 +240,32 @@ class DashBoardController extends GetxController {
     }
 
     Get.back();
+  } */
+
+  Future<void> onSelectItem(int index) async {
+    if (drawerItems[index].isHeader) return;
+
+    String title = drawerItems[index].title;
+
+    if (title == "Help / FAQ" ||
+        title == "Contact us" ||
+        title == "Report a problem" ||
+        title == "Notifications" ||
+        title == "Accessibility") {
+      ShowToastDialog.showToast("Coming Soon");
+      Get.back();
+      return;
+    }
+
+    if (title == "Logout") {
+      await FirebaseAuth.instance.signOut();
+      await Preferences.clearKeyData('userId');
+      Get.offAll(const LoginScreen());
+      return;
+    }
+
+    selectedDrawerIndex.value = index;
+    Get.back();
   }
 
   Future<void> signOut() async {
@@ -217,7 +274,7 @@ class DashBoardController extends GetxController {
     Get.offAll(const LoginScreen());
   }
 
-  void setDrawerList() {
+  /* void setDrawerList() {
     if (driverUser.value.ownerId == null) {
       if (Constant.isSubscriptionModelApplied == true) {
         drawerItems.value = [
@@ -276,6 +333,38 @@ class DashBoardController extends GetxController {
         DrawerItem('Log out', "assets/icons/ic_logout.svg"),
       ];
     }
+  } */
+
+  void setDrawerList() {
+    drawerItems.value = [
+      DrawerItem('Trips ', '', isHeader: true),
+      DrawerItem('Home', "assets/icons/ic_city.svg"),
+      DrawerItem('Trips in progress', "assets/icons/ic_order.svg"),
+      DrawerItem('Trip history', "assets/icons/ic_subscription_history.svg"),
+      DrawerItem('Plans', "assets/icons/ic_subscription.svg"),
+      DrawerItem('Plans History', "assets/icons/ic_subscription_history.svg"),
+      DrawerItem('Profile ', '', isHeader: true),
+      DrawerItem('My Wallet', "assets/icons/ic_wallet.svg"),
+      DrawerItem('Profile', "assets/icons/ic_profile.svg"),
+      DrawerItem('Vehicle Information', "assets/icons/ic_city.svg"),
+      DrawerItem('Bank Details', "assets/icons/ic_profile.svg"),
+      DrawerItem('Support ', '', isHeader: true),
+      DrawerItem('Help / FAQ', "assets/icons/ic_help_support.svg"),
+      DrawerItem('Contact us', "assets/icons/ic_help_support.svg"),
+      DrawerItem('Report a problem', "assets/icons/ic_help_support.svg"),
+      DrawerItem('Application   ', '', isHeader: true),
+      DrawerItem('Settings', "assets/icons/ic_settings.svg"),
+      DrawerItem('Notifications', "assets/icons/ic_help_support.svg"),
+      DrawerItem('Accessibility', "assets/icons/ic_help_support.svg"),
+      DrawerItem('Logout', "assets/icons/ic_logout.svg"),
+    ];
+
+    // Reset index if it's out of bounds after update
+    if (selectedDrawerIndex.value >= drawerItems.length) {
+      selectedDrawerIndex.value = 1; // Default to 'Home'
+    } else if (drawerItems[selectedDrawerIndex.value].isHeader) {
+      selectedDrawerIndex.value = selectedDrawerIndex.value + 1;
+    }
   }
 
   RxInt selectedDrawerIndex = 0.obs;
@@ -322,6 +411,7 @@ class DashBoardController extends GetxController {
 class DrawerItem {
   String title;
   String icon;
+  bool isHeader;
 
-  DrawerItem(this.title, this.icon);
+  DrawerItem(this.title, this.icon, {this.isHeader = false});
 }

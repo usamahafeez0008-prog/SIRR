@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/collection_name.dart';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
@@ -39,7 +40,7 @@ class DashBoardScreen extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: IconButton(
-                    onPressed: () => _showLogoutDialog(context, controller),
+                    onPressed: () => Scaffold.of(context).openDrawer(), //_showLogoutDialog(context, controller),
                     icon: SvgPicture.asset(
                       'assets/icons/ic_humber.svg',
                       color: Colors.white,
@@ -483,15 +484,33 @@ class DashBoardScreen extends StatelessWidget {
       var d = controller.drawerItems[i];
       bool isSelected = i == controller.selectedDrawerIndex.value;
 
+      if (d.isHeader) {
+        drawerOptions.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 16, 8),
+            child: Text(
+              d.title.tr,
+              style: GoogleFonts.outfit(
+                color: AppColors.moroccoRed,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+        );
+        continue;
+      }
+
       drawerOptions.add(
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
           child: InkWell(
             onTap: () => controller.onSelectItem(i),
             borderRadius: BorderRadius.circular(16),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.moroccoRed.withOpacity(0.12)
@@ -504,25 +523,14 @@ class DashBoardScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Icon with dynamic coloring
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.moroccoRed
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: SvgPicture.asset(
-                      d.icon,
-                      width: 18,
-                      color: isSelected
-                          ? Colors.white
-                          : (isDark ? Colors.white54 : Colors.black45),
-                    ),
+                   SvgPicture.asset(
+                    d.icon,
+                    width: 18,
+                    color: isSelected
+                        ? AppColors.moroccoRed
+                        : (isDark ? Colors.white54 : Colors.black45),
                   ),
                   const SizedBox(width: 16),
-                  // Title
                   Text(
                     d.title.tr,
                     style: GoogleFonts.outfit(
@@ -531,20 +539,9 @@ class DashBoardScreen extends StatelessWidget {
                           : (isDark ? Colors.white70 : Colors.black87),
                       fontWeight:
                           isSelected ? FontWeight.w700 : FontWeight.w500,
-                      fontSize: 15,
+                      fontSize: 14,
                     ),
                   ),
-                  const Spacer(),
-                  // Active indicator pill
-                  if (isSelected)
-                    Container(
-                      width: 4,
-                      height: 18,
-                      decoration: BoxDecoration(
-                        color: AppColors.moroccoRed,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -565,108 +562,143 @@ class DashBoardScreen extends StatelessWidget {
         children: [
           // ── Premium Header ──
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: AppColors.moroccoRed,
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
               borderRadius:
                   const BorderRadius.only(topRight: Radius.circular(35)),
             ),
-            child: Stack(
-              children: [
-                // Pattern background
-                Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius:
-                        const BorderRadius.only(topRight: Radius.circular(35)),
-                    child: CustomPaint(
-                      painter: _DrawerHeaderPainter(isDark: isDark),
-                    ),
-                  ),
-                ),
-                // Profile Info
-                SafeArea(
-                  bottom: false,
-                  child: FutureBuilder<DriverUserModel?>(
-                    future: FireStoreUtils.getDriverProfile(
-                        FireStoreUtils.getCurrentUid()),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) return const SizedBox.shrink();
-                      DriverUserModel driverModel = snapshot.data!;
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Profile Circle with Border
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
+            child: SafeArea(
+              bottom: false,
+              child: FutureBuilder<DriverUserModel?>(
+                future: FireStoreUtils.getDriverProfile(
+                    FireStoreUtils.getCurrentUid()),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const SizedBox.shrink();
+                  DriverUserModel driverModel = snapshot.data!;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+                    child: Row(
+                      children: [
+                        // Profile Circle
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: AppColors.moroccoRed.withOpacity(0.1),
+                                width: 1),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(60),
+                            child: CachedNetworkImage(
+                              height: 75,
+                              width: 75,
+                              imageUrl: driverModel.profilePic.toString(),
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Constant.loader(isDarkTheme: isDark),
+                              errorWidget: (context, url, error) =>
+                                  Image.network(Constant.userPlaceHolder),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                driverModel.fullName.toString(),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.moroccoRed,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(60),
-                                child: CachedNetworkImage(
-                                  height: 70,
-                                  width: 70,
-                                  imageUrl: driverModel.profilePic.toString(),
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) =>
-                                      Constant.loader(isDarkTheme: isDark),
-                                  errorWidget: (context, url, error) =>
-                                      Image.network(Constant.userPlaceHolder),
+                              const SizedBox(height: 4),
+                              StreamBuilder<QuerySnapshot>(
+                                stream: FireStoreUtils.fireStore
+                                    .collection('review_driver')
+                                    .where('driverId', isEqualTo: driverModel.id)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  double rating = 0.0;
+                                  if (snapshot.hasData &&
+                                      snapshot.data!.docs.isNotEmpty) {
+                                    double total = 0;
+                                    for (var doc in snapshot.data!.docs) {
+                                      total += double.tryParse(
+                                              doc['rating'].toString()) ??
+                                          0.0;
+                                    }
+                                    rating = total / snapshot.data!.docs.length;
+                                  }
+                                  return Row(
+                                    children: [
+                                      const Icon(Icons.star,
+                                          color: Colors.amber, size: 18),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        rating
+                                            .toStringAsFixed(1)
+                                            .replaceAll('.', ','),
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.black87,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Verified account".tr,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  color: isDark ? Colors.white54 : Colors.black54,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              driverModel.fullName.toString(),
-                              style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              driverModel.email.toString(),
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.white.withOpacity(0.8),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
 
           // ── Menu Items ──
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 0),
               children: drawerOptions,
             ),
           ),
 
           // ── Version App Info (Bottom) ──
-          Padding(
+         /* Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              "App Version v5.5".tr,
+              "App Version v 1.0".tr,
               style: GoogleFonts.outfit(
                 fontSize: 11,
                 color: isDark ? Colors.white24 : Colors.black26,
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ),
+          ),*/
+          SizedBox(height: 40,)
         ],
       ),
     );
@@ -674,48 +706,4 @@ class DashBoardScreen extends StatelessWidget {
 }
 
 // ─── Custom Painters for Styling ──────────────────────────────────────────────
-
-class _DrawerHeaderPainter extends CustomPainter {
-  final bool isDark;
-  _DrawerHeaderPainter({required this.isDark});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final gradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        AppColors.moroccoRed,
-        AppColors.moroccoRed.withOpacity(0.85),
-      ],
-    ).createShader(rect);
-
-    final paint = Paint()..shader = gradient;
-    canvas.drawRect(rect, paint);
-
-    // Decorative Moroccan Lattice Dots
-    final dotPaint = Paint()..color = Colors.white.withOpacity(0.08);
-    const spacing = 20.0;
-    for (double i = 0; i < size.width; i += spacing) {
-      for (double j = 0; j < size.height; j += spacing) {
-        canvas.drawCircle(Offset(i, j), 1.2, dotPaint);
-      }
-    }
-
-    // Abstract Curves
-    final curvePath = Path()
-      ..moveTo(0, size.height)
-      ..quadraticBezierTo(
-          size.width * 0.45, size.height * 0.8, size.width, size.height)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-
-    canvas.drawPath(curvePath,
-        Paint()..color = (isDark ? const Color(0xFF1A1A1A) : Colors.white));
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
+// _DrawerHeaderPainter was removed as it is no longer used in the new drawer design.

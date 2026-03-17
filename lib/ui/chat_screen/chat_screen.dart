@@ -12,7 +12,6 @@ import 'package:driver/model/ChatVideoContainer.dart';
 import 'package:driver/model/conversation_model.dart';
 import 'package:driver/model/inbox_model.dart';
 import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
 import 'package:driver/ui/chat_screen/FullScreenImageViewer.dart';
 import 'package:driver/ui/chat_screen/FullScreenVideoViewer.dart';
 import 'package:driver/ui/dashboard_screen.dart';
@@ -99,15 +98,46 @@ class _ChatScreensState extends State<ChatScreens> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
-        title: Text("${widget.customerName.toString()}\n#${widget.orderId.toString()}", maxLines: 2, style: GoogleFonts.poppins(color: Colors.white, fontSize: 14)),
-        leading: InkWell(
-            onTap: () {
-              Get.offAll(DashBoardScreen());
-            },
-            child: const Icon(
-              Icons.arrow_back,
-            )),
+        elevation: 0,
+        centerTitle: false,
+        backgroundColor: themeChange.getThem() ? AppColors.darkBackground : AppColors.lightprimary,
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: CachedNetworkImage(
+                height: 40,
+                width: 40,
+                imageUrl: widget.customerProfileImage ?? '',
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem(), strokeWidth: 2),
+                errorWidget: (context, url, error) => Image.network(Constant.userPlaceHolder, height: 40, width: 40),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.customerName ?? "Chat",
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                 /* Text(
+                    "#${widget.orderId}",
+                    style: GoogleFonts.poppins(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w400),
+                  ),*/
+                ],
+              ),
+            ),
+          ],
+        ),
+        leading: IconButton(
+          onPressed: () => Get.offAll(DashBoardScreen()),
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 0, right: 0, bottom: 8),
@@ -138,78 +168,56 @@ class _ChatScreensState extends State<ChatScreens> {
                     }),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: TextField(
-                    textInputAction: TextInputAction.send,
-                    keyboardType: TextInputType.text,
-                    textCapitalization: TextCapitalization.sentences,
-                    controller: _messageController,
-                    cursorColor: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
-                    decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.only(left: 10),
-                        filled: true,
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide(
-                              color: isStartRecording == true
-                                  ? themeChange.getThem()
-                                      ? AppColors.darksecondprimary
-                                      : AppColors.lightsecondprimary
-                                  : themeChange.getThem()
-                                      ? AppColors.darkTextFieldBorder
-                                      : AppColors.textFieldBorder,
-                              width: 1),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: themeChange.getThem() ? AppColors.darkBackground : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    spreadRadius: 1,
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                   /* IconButton(
+                      onPressed: _onCameraClick,
+                      icon: Icon(
+                        Icons.add_circle_outline_rounded,
+                        color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary,
+                        size: 28,
+                      ),
+                    ),*/
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: themeChange.getThem() ? AppColors.darkTextField : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: isStartRecording ? (themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary) : Colors.transparent,
+                            width: 1.5,
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary, width: 1),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide(
-                              color: isStartRecording == true
-                                  ? themeChange.getThem()
-                                      ? AppColors.darksecondprimary
-                                      : AppColors.lightsecondprimary
-                                  : themeChange.getThem()
-                                      ? AppColors.darkTextFieldBorder
-                                      : AppColors.textFieldBorder,
-                              width: 1),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide(
-                              color: isStartRecording == true
-                                  ? themeChange.getThem()
-                                      ? AppColors.darksecondprimary
-                                      : AppColors.lightsecondprimary
-                                  : themeChange.getThem()
-                                      ? AppColors.darkTextFieldBorder
-                                      : AppColors.textFieldBorder,
-                              width: 1),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide(
-                              color: isStartRecording == true
-                                  ? themeChange.getThem()
-                                      ? AppColors.darksecondprimary
-                                      : AppColors.lightsecondprimary
-                                  : themeChange.getThem()
-                                      ? AppColors.darkTextFieldBorder
-                                      : AppColors.textFieldBorder,
-                              width: 1),
-                        ),
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
+                        child: TextField(
+                          controller: _messageController,
+                          textInputAction: TextInputAction.send,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                          cursorColor: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary,
+                          decoration: InputDecoration(
+                            hintText: isStartRecording ? 'Recording...'.tr : 'Type a message...'.tr,
+                            hintStyle: GoogleFonts.poppins(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                              fontWeight: isStartRecording ? FontWeight.bold : FontWeight.w400,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            border: InputBorder.none,
+                            /*suffixIcon: GestureDetector(
                               onLongPress: () async {
                                 setState(() => isStartRecording = true);
                                 await startRecording();
@@ -228,61 +236,45 @@ class _ChatScreensState extends State<ChatScreens> {
                                   });
                                 }
                               },
-                              child: Icon(Icons.mic,
-                                  color: isStartRecording == true
-                                      ? themeChange.getThem()
-                                          ? AppColors.darksecondprimary
-                                          : AppColors.lightsecondprimary
-                                      : themeChange.getThem()
-                                          ? AppColors.background
-                                          : AppColors.darkTextFieldBorder),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                if (_messageController.text.isNotEmpty) {
-                                  _sendMessage(_messageController.text, null, '', 'text');
-                                  _messageController.clear();
-                                  setState(() {});
-                                } else {
-                                  ShowToastDialog.showToast("Please enter text".tr);
-                                }
-                              },
-                              icon: Icon(
-                                Icons.send_rounded,
-                                color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
+                              child: Icon(
+                                Icons.mic_none_rounded,
+                                color: isStartRecording
+                                    ? (themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary)
+                                    : Colors.grey[600],
                               ),
-                            ),
-                          ],
-                        ),
-                        prefixIcon: IconButton(
-                          onPressed: () async {
-                            _onCameraClick();
+                            ),*/
+                          ),
+                          onSubmitted: (value) {
+                            if (value.trim().isNotEmpty) {
+                              _sendMessage(value, null, '', 'text');
+                              _messageController.clear();
+                              setState(() {});
+                            }
                           },
-                          icon: Icon(Icons.camera_alt,
-                              color: isStartRecording == true
-                                  ? themeChange.getThem()
-                                      ? AppColors.darksecondprimary
-                                      : AppColors.lightsecondprimary
-                                  : themeChange.getThem()
-                                      ? AppColors.background
-                                      : AppColors.darkTextFieldBorder),
                         ),
-                        hintText: isStartRecording == true ? 'Start Recording...'.tr : 'Start typing ...'.tr,
-                        hintStyle: TextStyle(
-                            fontWeight: isStartRecording == true ? FontWeight.bold : FontWeight.w600,
-                            color: isStartRecording == true
-                                ? themeChange.getThem()
-                                    ? AppColors.darksecondprimary
-                                    : AppColors.lightsecondprimary
-                                : null)),
-                    onSubmitted: (value) async {
-                      if (_messageController.text.isNotEmpty) {
-                        _sendMessage(_messageController.text, null, '', 'text');
-                        _messageController.clear();
-                        setState(() {});
-                      }
-                    },
-                  ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () {
+                        if (_messageController.text.trim().isNotEmpty) {
+                          _sendMessage(_messageController.text, null, '', 'text');
+                          _messageController.clear();
+                          setState(() {});
+                        } else {
+                          ShowToastDialog.showToast("Please enter text".tr);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -296,217 +288,174 @@ class _ChatScreensState extends State<ChatScreens> {
     final themeChange = Provider.of<DarkThemeProvider>(context);
 
     return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-      child: isMe
-          ? Align(
-              alignment: Alignment.topRight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(crossAxisAlignment: CrossAxisAlignment.end, mainAxisAlignment: MainAxisAlignment.end, children: [
-                    data.messageType == "text"
-                        ? Container(
-                            decoration: BoxDecoration(
-                              color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
-                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            child: Text(
-                              data.message.toString(),
-                              style: TextStyle(
-                                  color: data.senderId == FireStoreUtils.getCurrentUid()
-                                      ? themeChange.getThem()
-                                          ? Colors.black
-                                          : Colors.white
-                                      : Colors.black),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary,
-                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            child: data.messageType == "image"
-                                ? ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      minWidth: 50,
-                                      maxWidth: 200,
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                                      child: Stack(alignment: Alignment.center, children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.to(FullScreenImageViewer(
-                                              imageUrl: data.url!.url,
-                                            ));
-                                          },
-                                          child: Hero(
-                                            tag: data.url!.url,
-                                            child: CachedNetworkImage(
-                                              imageUrl: data.url!.url,
-                                              placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem()),
-                                              errorWidget: (context, url, error) => const Icon(Icons.error),
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                    ))
-                                : data.messageType == "voice"
-                                    ? VoiceBubble(
-                                        url: data.url!.url,
-                                        durationSec: data.recordingTimer ?? 0,
-                                        isme: isMe,
-                                      )
-                                    : FloatingActionButton(
-                                        mini: true,
-                                        heroTag: data.id,
-                                        onPressed: () {
-                                          Get.to(FullScreenVideoViewer(
-                                            heroTag: data.id.toString(),
-                                            videoUrl: data.url!.url,
-                                          ));
-                                        },
-                                        child: const Icon(
-                                          Icons.play_arrow,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                          ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: CachedNetworkImage(
-                          height: Responsive.width(5, context),
-                          width: Responsive.width(5, context),
-                          imageUrl: widget.driverProfileImage ?? '',
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem()),
-                          errorWidget: (context, url, error) => Image.network(Constant.userPlaceHolder),
-                        ),
-                      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      child: Column(
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (!isMe)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8, bottom: 2),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: CachedNetworkImage(
+                      height: 30,
+                      width: 30,
+                      imageUrl: widget.customerProfileImage ?? '',
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem(), strokeWidth: 2),
+                      errorWidget: (context, url, error) => Image.network(Constant.userPlaceHolder, height: 30, width: 30),
                     ),
-                  ]),
-                  const SizedBox(
-                    height: 2,
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(Constant.dateAndTimeFormatTimestamp(data.createdAt), style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w400)),
-                      SizedBox(width: 5),
-                      data.seen == true
-                          ? Text("✓✓", style: GoogleFonts.poppins(fontSize: 10, color: themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightsecondprimary, fontWeight: FontWeight.w400))
-                          : Text("✓", style: GoogleFonts.poppins(fontSize: 10, color: AppColors.subTitleColor, fontWeight: FontWeight.w400)),
-                    ],
-                  ),
-                ],
+                ),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isMe
+                            ? (themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary)
+                            : (themeChange.getThem() ? AppColors.darkTextField : Colors.grey[200]),
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(16),
+                          topRight: const Radius.circular(16),
+                          bottomLeft: isMe ? const Radius.circular(16) : const Radius.circular(0),
+                          bottomRight: isMe ? const Radius.circular(0) : const Radius.circular(16),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: data.messageType == "text" ? const EdgeInsets.symmetric(horizontal: 16, vertical: 12) : EdgeInsets.zero,
+                      child: _buildMessageContent(data, isMe, themeChange),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          Constant.dateAndTimeFormatTimestamp(data.createdAt),
+                          style: GoogleFonts.poppins(
+                            fontSize: 10,
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        if (isMe) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            data.seen == true ? Icons.done_all_rounded : Icons.done_rounded,
+                            size: 14,
+                            color: data.seen == true
+                                ? (themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary)
+                                : Colors.grey[400],
+                          ),
+                        ]
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: CachedNetworkImage(
-                          height: Responsive.width(5, context),
-                          width: Responsive.width(5, context),
-                          imageUrl: widget.customerProfileImage ?? '',
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem()),
-                          errorWidget: (context, url, error) => Image.network(Constant.userPlaceHolder),
-                        ),
-                      ),
+              if (isMe)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, bottom: 2),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: CachedNetworkImage(
+                      height: 30,
+                      width: 30,
+                      imageUrl: widget.driverProfileImage ?? '',
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem(), strokeWidth: 2),
+                      errorWidget: (context, url, error) => Image.network(Constant.userPlaceHolder, height: 30, width: 30),
                     ),
-                    SizedBox(width: 5),
-                    data.messageType == "text"
-                        ? Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                              color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.grey200,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            child: Text(
-                              data.message.toString(),
-                              style: GoogleFonts.poppins(color: Colors.black),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                              color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.grey200,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            child: data.messageType == "image"
-                                ? ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      minWidth: 50,
-                                      maxWidth: 200,
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                      child: Stack(alignment: Alignment.center, children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.to(FullScreenImageViewer(
-                                              imageUrl: data.url!.url,
-                                            ));
-                                          },
-                                          child: Hero(
-                                            tag: data.url!.url,
-                                            child: CachedNetworkImage(
-                                              imageUrl: data.url!.url,
-                                              placeholder: (context, url) => Constant.loader(isDarkTheme: themeChange.getThem()),
-                                              errorWidget: (context, url, error) => const Icon(Icons.error),
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                    ))
-                                : data.messageType == "voice"
-                                    ? VoiceBubble(
-                                        url: data.url!.url,
-                                        durationSec: data.recordingTimer ?? 0,
-                                        isme: isMe,
-                                      )
-                                    : FloatingActionButton(
-                                        mini: true,
-                                        heroTag: data.id,
-                                        onPressed: () {
-                                          Get.to(FullScreenVideoViewer(
-                                            heroTag: data.id.toString(),
-                                            videoUrl: data.url!.url,
-                                          ));
-                                        },
-                                        child: const Icon(
-                                          Icons.play_arrow,
-                                        ),
-                                      ),
-                          ),
-                  ],
+                  ),
                 ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(Constant.dateAndTimeFormatTimestamp(data.createdAt), style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w400)),
-                  ],
-                ),
-              ],
-            ),
+            ],
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildMessageContent(ConversationModel data, bool isMe, DarkThemeProvider themeChange) {
+    if (data.messageType == "text") {
+      return Text(
+        data.message.toString(),
+        style: GoogleFonts.poppins(
+          color: isMe ? Colors.white : (themeChange.getThem() ? Colors.white : Colors.black87),
+          fontSize: 14,
+        ),
+      );
+    } else if (data.messageType == "image") {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: GestureDetector(
+          onTap: () => Get.to(FullScreenImageViewer(imageUrl: data.url!.url)),
+          child: Hero(
+            tag: data.url!.url,
+            child: CachedNetworkImage(
+              imageUrl: data.url!.url,
+              placeholder: (context, url) => Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Constant.loader(isDarkTheme: themeChange.getThem()),
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              width: 200,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+        ),
+      );
+    } else if (data.messageType == "voice") {
+      return VoiceBubble(
+        url: data.url!.url,
+        durationSec: data.recordingTimer ?? 0,
+        isme: isMe,
+      );
+    } else if (data.messageType == "video") {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: CachedNetworkImage(
+              imageUrl: data.videoThumbnail ?? '',
+              width: 200,
+              height: 150,
+              fit: BoxFit.cover,
+              errorWidget: (context, url, error) => Container(
+                width: 200,
+                height: 150,
+                color: Colors.black12,
+                child: const Icon(Icons.videocam_off_rounded),
+              ),
+            ),
+          ),
+          CircleAvatar(
+            backgroundColor: Colors.white.withOpacity(0.3),
+            child: IconButton(
+              onPressed: () {
+                Get.to(FullScreenVideoViewer(
+                  heroTag: data.id.toString(),
+                  videoUrl: data.url!.url,
+                ));
+              },
+              icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
+            ),
+          ),
+        ],
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Future<void> _sendMessage(String message, Url? url, String videoThumbnail, String messageType, {int? voiceTimer}) async {
@@ -700,75 +649,71 @@ class _VoiceBubbleState extends State<VoiceBubble> {
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
-    return Column(
-      children: [
-        IconButton(
-          icon: isLoading == true
-              ? CircleAvatar(
-                  radius: 20,
-                  backgroundColor: themeChange.getThem() ? Colors.black : Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Constant.loader(strokeWidth: 2, isDarkTheme: themeChange.getThem()),
-                  ))
-              : isPlaying
-                  ? CircleAvatar(
-                      radius: 20,
-                      backgroundColor: widget.isme == true
-                          ? themeChange.getThem()
-                              ? Colors.black
-                              : Colors.white
-                          : themeChange.getThem()
-                              ? Colors.white
-                              : Colors.black,
-                      child: Icon(
-                        Icons.pause,
-                        color: widget.isme != true
-                            ? themeChange.getThem()
-                                ? Colors.black
-                                : Colors.white
-                            : themeChange.getThem()
-                                ? Colors.white
-                                : Colors.black,
-                      ))
-                  : CircleAvatar(
-                      radius: 20,
-                      backgroundColor: widget.isme == true
-                          ? themeChange.getThem()
-                              ? Colors.black
-                              : Colors.white
-                          : Colors.black,
-                      child: Icon(
-                        Icons.play_arrow,
-                        color: widget.isme != true
-                            ? Colors.white
-                            : themeChange.getThem()
-                                ? Colors.white
-                                : Colors.black,
-                      )),
-          onPressed: () async {
-            if (isPlaying) {
-              await player.pause();
-              setState(() {
-                isPlaying = false;
-              });
-            } else {
-              await player.setUrl(widget.url);
-              await player.play();
-            }
-            setState(() {});
-          },
-        ),
-        Text(Constant().formatDuration(widget.durationSec),
-            style: GoogleFonts.poppins(
-                fontSize: 10,
-                color: widget.isme == true
-                    ? themeChange.getThem()
-                        ? Colors.black
-                        : Colors.white
-                    : Colors.black,
-                fontWeight: FontWeight.w400)),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () async {
+              if (isPlaying) {
+                await player.pause();
+                setState(() {
+                  isPlaying = false;
+                });
+              } else {
+                await player.setUrl(widget.url);
+                await player.play();
+              }
+              setState(() {});
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: widget.isme == true ? Colors.white24 : (themeChange.getThem() ? Colors.white12 : Colors.black12),
+                shape: BoxShape.circle,
+              ),
+              child: isLoading
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(widget.isme == true ? Colors.white : (themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary)),
+                      ),
+                    )
+                  : Icon(
+                      isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      color: widget.isme == true ? Colors.white : (themeChange.getThem() ? AppColors.darksecondprimary : AppColors.lightprimary),
+                      size: 24,
+                    ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 60,
+                height: 2,
+                decoration: BoxDecoration(
+                  color: widget.isme == true ? Colors.white38 : Colors.grey[400],
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                Constant().formatDuration(widget.durationSec),
+                style: GoogleFonts.poppins(
+                  fontSize: 10,
+                  color: widget.isme == true ? Colors.white70 : Colors.grey[600],
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
