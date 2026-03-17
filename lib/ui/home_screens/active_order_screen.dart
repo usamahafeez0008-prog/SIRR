@@ -20,6 +20,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 class ActiveOrderScreen extends StatelessWidget {
   const ActiveOrderScreen({super.key});
@@ -57,7 +59,7 @@ class ActiveOrderScreen extends StatelessWidget {
                   : ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
+
                       itemBuilder: (context, index) {
                         OrderModel orderModel = OrderModel.fromJson(
                             snapshot.data!.docs[index].data()
@@ -346,49 +348,117 @@ class ActiveOrderScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                             if (orderModel.status != Constant.rideHold &&
                                 orderModel.status != Constant.rideHoldAccepted)
-                              Row(
-                                children: [
-                                  _buildActionButton(
-                                    onTap: () async {
-                                      UserModel? customer =
-                                          await FireStoreUtils.getCustomer(
-                                              orderModel.userId.toString());
+                               SizedBox(
+                                height: 48,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildActionButton(
+                                      onTap: () async {
+                                        UserModel? customer =
+                                            await FireStoreUtils.getCustomer(
+                                                orderModel.userId.toString());
 
-                                      Get.to(ChatScreens(
-                                        driverId:
-                                            controller.drivermodel.value?.id,
-                                        customerId: customer!.id,
-                                        customerName: customer.fullName,
-                                        customerProfileImage:
-                                            customer.profilePic,
-                                        driverName: controller
-                                            .drivermodel.value?.fullName,
-                                        driverProfileImage: controller
-                                            .drivermodel.value?.profilePic,
-                                        orderId: orderModel.id,
-                                        token: customer.fcmToken,
-                                      ));
-                                    },
-                                    icon: Icons.chat_bubble_outline_outlined,
-                                    color: themeChange.getThem()
-                                        ? AppColors.moroccoGreen
-                                        : AppColors.moroccoGreen,
-                                    isDark: themeChange.getThem(),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildActionButton(
-                                    onTap: () async {
-                                      UserModel? customer =
-                                          await FireStoreUtils.getCustomer(
-                                              orderModel.userId.toString());
-                                      Constant.makePhoneCall(
-                                          "${customer!.countryCode}${customer.phoneNumber}");
-                                    },
-                                    icon: Icons.call_rounded,
-                                    color: AppColors.moroccoGreen,
-                                    isDark: themeChange.getThem(),
-                                  ),
-                                ],
+                                        Get.to(ChatScreens(
+                                          driverId:
+                                              controller.drivermodel.value?.id,
+                                          customerId: customer!.id,
+                                          customerName: customer.fullName,
+                                          customerProfileImage:
+                                              customer.profilePic,
+                                          driverName: controller
+                                              .drivermodel.value?.fullName,
+                                          driverProfileImage: controller
+                                              .drivermodel.value?.profilePic,
+                                          orderId: orderModel.id,
+                                          token: customer.fcmToken,
+                                        ));
+                                      },
+                                      icon: Icons.chat_bubble_outline_outlined,
+                                      color: themeChange.getThem()
+                                          ? AppColors.moroccoGreen
+                                          : AppColors.moroccoGreen,
+                                      isDark: themeChange.getThem(),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    /*if (customer != null && customer.id != null)
+                                      ZegoSendCallInvitationButton(
+                                        isVideoCall: false,
+                                        resourceID: "zego_call",
+                                        invitees: [
+                                          ZegoUIKitUser(
+                                            id: customer.id!,
+                                            name: customer.fullName ?? 'Customer',
+                                          )
+                                        ],
+                                        buttonSize: const Size(48, 48),
+                                        iconSize: const Size(24, 24), // important
+                                        verticalLayout: false,        // optional, but better for icon-only button
+                                        padding: EdgeInsets.zero,
+                                        margin: EdgeInsets.zero,
+                                        borderRadius: 12,
+                                        icon: ButtonIcon(
+                                          icon: const Icon(
+                                            Icons.call_rounded,
+                                            color: AppColors.moroccoGreen,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        clickableBackgroundColor: AppColors.moroccoGreen.withOpacity(0.15),
+                                        onPressed: (
+                                            String code,
+                                            String message,
+                                            List<String> errorInvitees,
+                                            ) {
+                                          if (errorInvitees.isNotEmpty) {
+                                            ShowToastDialog.showToast("Customer is offline");
+                                          }
+                                        },
+                                      )
+                                    else
+                                      const SizedBox(width: 48, height: 48),*/
+                                    if (customer != null && customer.id != null)
+                                      ZegoSendCallInvitationButton(
+                                        isVideoCall: false,
+                                        resourceID: "zego_call",
+                                        invitees: [
+                                          ZegoUIKitUser(
+                                            id: customer.id!,
+                                            name: customer.fullName ?? 'Customer',
+                                          )
+                                        ],
+                                        buttonSize: const Size(48, 48),
+                                        iconSize: const Size(24, 24),
+                                        verticalLayout: false,
+                                        padding: EdgeInsets.zero,
+                                        margin: EdgeInsets.zero,
+                                        borderRadius: 12,
+                                        icon: ButtonIcon(
+                                          icon: const Icon(
+                                            Icons.call_rounded,
+                                            color: AppColors.moroccoGreen,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        clickableBackgroundColor: AppColors.moroccoGreen.withOpacity(0.15),
+                                        onPressed: (
+                                            String code,
+                                            String message,
+                                            List<String> errorInvitees,
+                                            ) {
+                                          debugPrint(
+                                            'Driver call invite => code: $code, message: $message, errorInvitees: $errorInvitees',
+                                          );
+
+                                          if (code.isNotEmpty || errorInvitees.isNotEmpty) {
+                                            ShowToastDialog.showToast("Customer is offline or unavailable");
+                                          }
+                                        },
+                                      )
+                                    else
+                                      const SizedBox(width: 48, height: 48),
+                                  ],
+                                ),
                               ),
                           ],
                         ),

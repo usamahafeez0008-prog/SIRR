@@ -12,6 +12,7 @@ import 'package:driver/ui/order_screen/order_screen.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/widget/geoflutterfire/src/geoflutterfire.dart';
 import 'package:driver/widget/geoflutterfire/src/models/point.dart';
+import 'package:driver/utils/zego_call_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
@@ -36,10 +37,38 @@ class HomeController extends GetxController {
 
   RxBool isLoading = true.obs;
 
-  Future<void> getDriver() async {
+ /* Future<void> getDriver() async {
     FireStoreUtils.fireStore.collection(CollectionName.driverUsers).doc(FireStoreUtils.getCurrentUid()).snapshots().listen((event) {
       if (event.exists) {
-        driverModel.value = DriverUserModel.fromJson(event.data()!);
+        DriverUserModel newDriver = DriverUserModel.fromJson(event.data()!);
+        if (driverModel.value.id != newDriver.id) {
+          ZegoCallService().initZego(newDriver.id!, newDriver.fullName!);
+        }
+        driverModel.value = newDriver;
+      }
+    });
+
+    updateCurrentLocation();
+  }*/
+  Future<void> getDriver() async {
+    FireStoreUtils.fireStore
+        .collection(CollectionName.driverUsers)
+        .doc(FireStoreUtils.getCurrentUid())
+        .snapshots()
+        .listen((event) async {
+      if (!event.exists) return;
+
+      DriverUserModel newDriver = DriverUserModel.fromJson(event.data()!);
+
+      // set model first
+      driverModel.value = newDriver;
+
+      // init once for current logged-in driver
+      if (newDriver.id != null && newDriver.fullName != null) {
+        await ZegoCallService().initZego(
+          newDriver.id!,
+          newDriver.fullName!,
+        );
       }
     });
 

@@ -11,8 +11,135 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+
 import 'services/localization_service.dart';
 import 'themes/Styles.dart';
+import 'utils/Preferences.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isIOS) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else {
+    await Firebase.initializeApp(
+      name: 'driver',
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
+  await Preferences.initPref();
+
+  // Required for incoming invitation UI navigation
+  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
+
+  // Required for system calling UI / offline call handling
+  await ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+    [ZegoUIKitSignalingPlugin()],
+  );
+
+  EasyLoading.instance
+    ..displayDuration = const Duration(seconds: 2)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..backgroundColor = AppColors.lightsecondprimary
+    ..textColor = Colors.black
+    ..indicatorColor = Colors.black
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = false
+    ..dismissOnTap = false;
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  DarkThemeProvider themeChangeProvider = DarkThemeProvider();
+
+  @override
+  void initState() {
+    getCurrentAppTheme();
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    getCurrentAppTheme();
+  }
+
+  void getCurrentAppTheme() async {
+    themeChangeProvider.darkTheme =
+    await themeChangeProvider.darkThemePreference.getTheme();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => themeChangeProvider,
+      child: Consumer<DarkThemeProvider>(
+        builder: (context, value, child) {
+          return GetMaterialApp(
+            navigatorKey: navigatorKey,
+            title: 'SIIR'.tr,
+            debugShowCheckedModeBanner: false,
+            theme: Styles.themeData(
+              themeChangeProvider.darkTheme == 0
+                  ? true
+                  : themeChangeProvider.darkTheme == 1
+                  ? false
+                  : false,
+              context,
+            ),
+            localizationsDelegates: const [
+              CountryLocalizations.delegate,
+            ],
+            locale: LocalizationService.locale,
+            fallbackLocale: LocalizationService.locale,
+            translations: LocalizationService(),
+            builder: EasyLoading.init(),
+            home: GetBuilder<GlobalSettingController>(
+              init: GlobalSettingController(),
+              builder: (controller) {
+                return const SplashScreen();
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/*
+import 'dart:io';
+
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:driver/controller/global_setting_conroller.dart';
+import 'package:driver/firebase_options.dart';
+import 'package:driver/themes/app_colors.dart';
+import 'package:driver/ui/splash_screen.dart';
+import 'package:driver/utils/DarkThemeProvider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'services/localization_service.dart';
+import 'themes/Styles.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'utils/Preferences.dart';
 
 void main() async {
@@ -103,3 +230,4 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
+*/

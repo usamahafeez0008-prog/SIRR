@@ -171,6 +171,8 @@ class ProfileScreen extends StatelessWidget {
                                         ),
                                         ButtonThem.buildButton(
                                           context,
+                                          bgColors: AppColors.moroccoGreen,
+                                          textColor: Colors.white,
                                           title: "Update Profile".tr,
                                           onPress: () async {
                                             if (controller.fullNameController.value.text.isEmpty) {

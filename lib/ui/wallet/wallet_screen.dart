@@ -155,14 +155,14 @@ class WalletScreen extends StatelessWidget {
                                 color: isDark ? Colors.white : AppColors.moroccoText,
                               ),
                             ),
-                            Text(
+                           /* Text(
                               "View All".tr,
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.moroccoRed,
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -1315,169 +1315,256 @@ class WalletScreen extends StatelessWidget {
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
-        ),
+        backgroundColor: Colors.transparent,
         builder: (context) {
           final themeChange = Provider.of<DarkThemeProvider>(context);
+          final bool isDark = themeChange.getThem();
 
-          return StatefulBuilder(builder: (context, setState) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SingleChildScrollView(
+          return Container(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkBackground : AppColors.moroccoBackground,
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 25.0, bottom: 10),
-                      child: Text(
-                        "Withdraw".tr,
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
+                    const SizedBox(height: 12),
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ),
+                    const SizedBox(height: 24),
+                    Text(
+                      "Withdraw".tr,
+                      style: GoogleFonts.outfit(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : AppColors.moroccoText,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // ── Bank Card Design ──
                     Container(
-                        decoration: BoxDecoration(
-                          color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
-                          boxShadow: themeChange.getThem()
-                              ? null
-                              : [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2), // changes position of shadow
-                                  ),
-                                ],
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isDark 
+                              ? [const Color(0xFF2C2C2C), const Color(0xFF1A1A1A)]
+                              : [Colors.white, const Color(0xFFF0F0F0)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    controller.bankDetailsModel.value.bankName.toString(),
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      controller.bankDetailsModel.value.bankName.toString(),
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: isDark ? Colors.white : AppColors.moroccoText,
+                                      ),
                                     ),
-                                  ),
-                                  const Icon(
-                                    Icons.account_balance,
-                                    size: 40,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.accountNumber.toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
+                                    Text(
+                                      "Primary Bank Account".tr,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.holderName.toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.branchName.toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.otherInformation.toString(),
-                                style: GoogleFonts.poppins(),
-                              ),
-                              const SizedBox(
-                                height: 10,
+                              Icon(
+                                Icons.account_balance_wallet_outlined,
+                                color: AppColors.moroccoRed.withOpacity(0.8),
+                                size: 32,
                               ),
                             ],
                           ),
-                        )),
-                    const SizedBox(
-                      height: 20,
+                          const SizedBox(height: 20),
+                          Text(
+                            controller.bankDetailsModel.value.accountNumber.toString().replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} "),
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              letterSpacing: 1.5,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : AppColors.moroccoText,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "ACCOUNT HOLDER".tr,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    controller.bankDetailsModel.value.holderName.toString(),
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white : AppColors.moroccoText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "BRANCH".tr,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    controller.bankDetailsModel.value.branchName.toString(),
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white : AppColors.moroccoText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    RichText(
-                      text: TextSpan(
-                        text: "Amount to Withdraw".tr,
-                        style: GoogleFonts.poppins(
+                    const SizedBox(height: 24),
+                    
+                    Text(
+                      "Withdrawal Amount".tr,
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFieldThem.buildTextFiled(
+                      context, 
+                      hintText: 'Enter Amount'.tr, 
+                      controller: controller.withdrawalAmountController.value,
+                      borderRadius: 16,
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
+                      keyBoardType: const TextInputType.numberWithOptions(decimal: true),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    Text(
+                      "Notes (Optional)".tr,
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFieldThem.buildTextFiled(
+                      context, 
+                      hintText: 'Add a note for this transaction'.tr, 
+                      maxLine: 3, 
+                      controller: controller.noteController.value,
+                      borderRadius: 16,
+                    ),
+                    const SizedBox(height: 32),
+                    
+                    MaterialButton(
+                      onPressed: () async {
+                        if (controller.withdrawalAmountController.value.text.isEmpty) {
+                           ShowToastDialog.showToast("Please enter amount".tr);
+                           return;
+                        }
+                        if (double.parse(controller.driverUserModel.value.walletAmount.toString()) < double.parse(controller.withdrawalAmountController.value.text)) {
+                          ShowToastDialog.showToast("Insufficient balance".tr);
+                        } else if (double.parse(Constant.minimumAmountToWithdrawal) > double.parse(controller.withdrawalAmountController.value.text)) {
+                          ShowToastDialog.showToast("Withdraw amount must be greater or equal to ${Constant.amountShow(amount: Constant.minimumAmountToWithdrawal.toString())}".tr);
+                        } else {
+                          ShowToastDialog.showLoader("Please wait".tr);
+                          WithdrawModel withdrawModel = WithdrawModel();
+                          withdrawModel.id = Constant.getUuid();
+                          withdrawModel.userId = FireStoreUtils.getCurrentUid();
+                          withdrawModel.paymentStatus = "pending";
+                          withdrawModel.amount = controller.withdrawalAmountController.value.text;
+                          withdrawModel.note = controller.noteController.value.text;
+                          withdrawModel.createdDate = Timestamp.now();
+
+                          await FireStoreUtils.updatedDriverWallet(amount: "-${controller.withdrawalAmountController.value.text}");
+
+                          await FireStoreUtils.setWithdrawRequest(withdrawModel).then((value) {
+                            controller.getUser();
+                            ShowToastDialog.closeLoader();
+                            ShowToastDialog.showToast("Request sent to admin".tr);
+                            Get.back();
+                          });
+                        }
+                      },
+                      height: 56,
+                      minWidth: double.infinity,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      color: AppColors.moroccoRed,
+                      elevation: 4,
+                      child: Text(
+                        "Request Withdrawal".tr,
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
                           fontSize: 16,
-                          color: themeChange.getThem() ? AppColors.containerBackground : AppColors.darkContainerBackground,
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldThem.buildTextFiled(context, hintText: 'Enter Amount'.tr, controller: controller.withdrawalAmountController.value),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldThem.buildTextFiled(context, hintText: 'Notes'.tr, maxLine: 3, controller: controller.noteController.value),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ButtonThem.buildButton(
-                          context,
-                          title: "Withdrawal".tr,
-                          onPress: () async {
-                            if (double.parse(controller.driverUserModel.value.walletAmount.toString()) < double.parse(controller.withdrawalAmountController.value.text)) {
-                              ShowToastDialog.showToast("Insufficient balance".tr);
-                            } else if (double.parse(Constant.minimumAmountToWithdrawal) > double.parse(controller.withdrawalAmountController.value.text)) {
-                              ShowToastDialog.showToast("Withdraw amount must be greater or equal to ${Constant.amountShow(amount: Constant.minimumAmountToWithdrawal.toString())}".tr);
-                            } else {
-                              ShowToastDialog.showLoader("Please wait".tr);
-                              WithdrawModel withdrawModel = WithdrawModel();
-                              withdrawModel.id = Constant.getUuid();
-                              withdrawModel.userId = FireStoreUtils.getCurrentUid();
-                              withdrawModel.paymentStatus = "pending";
-                              withdrawModel.amount = controller.withdrawalAmountController.value.text;
-                              withdrawModel.note = controller.noteController.value.text;
-                              withdrawModel.createdDate = Timestamp.now();
-
-                              await FireStoreUtils.updatedDriverWallet(amount: "-${controller.withdrawalAmountController.value.text}");
-
-                              await FireStoreUtils.setWithdrawRequest(withdrawModel).then((value) {
-                                controller.getUser();
-                                ShowToastDialog.closeLoader();
-                                ShowToastDialog.showToast("Request sent to admin".tr);
-                                Get.back();
-                              });
-                            }
-                          },
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 70),
                   ],
                 ),
               ),
-            );
-          });
+            ),
+          );
         });
   }
+
 }

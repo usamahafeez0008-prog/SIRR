@@ -19,6 +19,7 @@ import 'package:driver/utils/Preferences.dart';
 import 'package:driver/ui/wallet/wallet_screen.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/zego_call_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -258,6 +259,7 @@ class DashBoardController extends GetxController {
     }
 
     if (title == "Logout") {
+      ZegoCallService().uninitZego();
       await FirebaseAuth.instance.signOut();
       await Preferences.clearKeyData('userId');
       Get.offAll(const LoginScreen());
@@ -269,6 +271,7 @@ class DashBoardController extends GetxController {
   }
 
   Future<void> signOut() async {
+    ZegoCallService().uninitZego();
     await FirebaseAuth.instance.signOut();
     await Preferences.clearKeyData('userId');
     Get.offAll(const LoginScreen());
