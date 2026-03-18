@@ -197,7 +197,7 @@ class DashBoardController extends GetxController {
       case 8: // Profile
         return const ProfileScreen();
       case 9: // Vehicle Information
-        if (Constant.isVerifyDocument == true) {
+        if (Constant.isVerifyDocument == true && driverUser.value.documentVerification == false) {
           return const OnlineRegistrationScreen();
         } else {
           return const VehicleInformationScreen();
@@ -374,7 +374,7 @@ class DashBoardController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
+    setDrawerList();
     getDriver();
     getLocation();
     super.onInit();
@@ -382,13 +382,14 @@ class DashBoardController extends GetxController {
 
   Rx<DriverUserModel> driverUser = DriverUserModel().obs;
   Future<void> getDriver() async {
-    await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid())
-        .then((driver) {
+    await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()).then((driver) {
       if (driver?.id != null) {
         driverUser.value = driver!;
+        if (driverUser.value.documentVerification == true && (driverUser.value.vehicleInformation == null || driverUser.value.serviceId == null)) {
+          selectedDrawerIndex.value = 9;
+        }
       }
     });
-    setDrawerList();
   }
 
   getLocation() async {
