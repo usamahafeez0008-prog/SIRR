@@ -305,5 +305,22 @@ const Map<String, String> arAR = {
   "Please Select Payment Method.": "يرجى اختيار طريقة الدفع.",
   "Subscription plan purchase": "شراء خطة الاشتراك",
   "Choose Subscription Plan": "اختر خطة الاشتراك",
-  "Wallet Amount Insufficient": "رصيد المحفظة غير كافٍ"
+  "Wallet Amount Insufficient": "رصيد المحفظة غير كافٍ",
+  "Trips ": "الرحلات",
+  "Home": "الرئيسية",
+  "Trips in progress": "رحلات قيد التنفيذ",
+  "Trip history": "سجل الرحلات",
+  "Plans": "الخطط",
+  "Plans History": "سجل الخطط",
+  "Profile ": "الملف الشخصي",
+  "Support ": "الدعم",
+  "Help / FAQ": "المساعدة / الأسئلة الشائعة",
+  "Contact us": "اتصل بنا",
+  "Report a problem": "الإبلاغ عن مشكلة",
+  "Application   ": "التطبيق",
+  "Notifications": "التنبيهات",
+  "Accessibility": "إمكانية الوصول",
+  "Logout": "تسجيل الخروج",
+  "Double press to exit": "اضغط مرتين للخروج",
+  "Coming Soon": "قريباً"
 };

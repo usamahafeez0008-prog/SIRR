@@ -310,5 +310,22 @@ const Map<String, String> enUS = {
   'Please Select Payment Method.': 'Please Select Payment Method.',
   "Subscription plan purchase": "Subscription plan purchase",
   'Choose Subscription Plan': 'Choose Subscription Plan',
-  'Wallet Amount Insufficient': 'Wallet Amount Insufficient'
+  'Wallet Amount Insufficient': 'Wallet Amount Insufficient',
+  "Trips ": "Trips",
+  "Home": "Home",
+  "Trips in progress": "Trips in progress",
+  "Trip history": "Trip history",
+  "Plans": "Plans",
+  "Plans History": "Plans History",
+  "Profile ": "Profile",
+  "Support ": "Support",
+  "Help / FAQ": "Help / FAQ",
+  "Contact us": "Contact us",
+  "Report a problem": "Report a problem",
+  "Application   ": "Application",
+  "Notifications": "Notifications",
+  "Accessibility": "Accessibility",
+  "Logout": "Logout",
+  "Double press to exit": "Double press to exit",
+  "Coming Soon": "Coming Soon"
 };

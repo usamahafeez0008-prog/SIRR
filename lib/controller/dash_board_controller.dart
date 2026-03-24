@@ -253,7 +253,7 @@ class DashBoardController extends GetxController {
         title == "Report a problem" ||
         title == "Notifications" ||
         title == "Accessibility") {
-      ShowToastDialog.showToast("Coming Soon");
+      ShowToastDialog.showToast("Coming Soon".tr);
       Get.back();
       return;
     }
@@ -404,7 +404,7 @@ class DashBoardController extends GetxController {
         const Duration(seconds: 2)) {
       currentBackPressTime.value = now;
       ShowToastDialog.showToast(
-        "Double press to exit",
+        "Double press to exit".tr,
       );
       return Future.value(false);
     }
