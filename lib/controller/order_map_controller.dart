@@ -92,16 +92,25 @@ class OrderMapController extends GetxController {
       }
       await FireStoreUtils.setOrder(orderModel.value);
 
+      debugPrint("Step [Driver]: Attempting to fetch customer profile for order notification...");
       await FireStoreUtils.getCustomer(orderModel.value.userId.toString())
           .then((value) async {
         if (value != null) {
-          await SendNotification.sendOneNotification(
-              token: value.fcmToken.toString(),
-              title: 'New Driver Bid'.tr,
-              body:
-                  'Driver has offered ${Constant.amountShow(amount: finalAmount.value.toString())} for your journey.🚗'
-                      .tr,
-              payload: {});
+          debugPrint("Step [Driver]: Customer profile found, notifying customer: ${value.fullName}");
+          debugPrint("Step [Driver]: Customer FCM Token: ${value.fcmToken}");
+          if (value.fcmToken != null && value.fcmToken!.isNotEmpty && value.fcmToken! != "null") {
+            await SendNotification.sendOneNotification(
+                token: value.fcmToken.toString(),
+                title: 'New Driver Bid'.tr,
+                body:
+                    'Driver has offered ${Constant.amountShow(amount: finalAmount.value.toString())} for your journey.🚗'
+                        .tr,
+                payload: {});
+          } else {
+            debugPrint("Step [Driver]: Notification skipped - customer FCM token is empty or null.");
+          }
+        } else {
+          debugPrint("Step [Driver]: Customer profile NOT found for ID: ${orderModel.value.userId}");
         }
       });
 

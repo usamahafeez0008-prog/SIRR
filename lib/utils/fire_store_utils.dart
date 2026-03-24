@@ -57,111 +57,71 @@ class FireStoreUtils {
   }
 
   Future<void> getGoogleAPIKey() async {
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("globalKey")
-        .get()
-        .then((value) {
-      if (value.exists) {
-        Constant.mapAPIKey = value.data()!["googleMapKey"];
-      }
-    });
-
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("globalValue")
-        .get()
-        .then((value) {
-      if (value.exists) {
-        AppColors.lightsecondprimary = Color(int.parse(
-            value.data()?['app_driver_light_color'].replaceFirst("#", "0xff")));
-        AppColors.darksecondprimary = Color(int.parse(
-            value.data()?['app_driver_color'].replaceFirst("#", "0xff")));
-        Constant.distanceType = value.data()!["distanceType"];
-        Constant.radius = value.data()!["radius"];
-        Constant.minimumAmountToWithdrawal =
-            value.data()!["minimumAmountToWithdrawal"];
-        Constant.minimumDepositToRideAccept =
-            value.data()!["minimumDepositToRideAccept"];
-        Constant.mapType = value.data()!["mapType"];
-        Constant.selectedMapType = value.data()!["selectedMapType"];
-        Constant.driverLocationUpdate = value.data()!["driverLocationUpdate"];
-        Constant.isVerifyDocument = value.data()!["isVerifyDocument"];
-        Constant.isSubscriptionModelApplied =
-            value.data()!["subscription_model"];
-        Constant.regionCode = value.data()!["regionCode"];
-        Constant.regionCountry = value.data()!["regionCountry"];
-      }
-    });
-
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("notification_setting")
-        .get()
-        .then((value) {
-      if (value.exists) {
-        if (value.data() != null) {
+    await Future.wait([
+      fireStore.collection(CollectionName.settings).doc("globalKey").get().then((value) {
+        if (value.exists) {
+          Constant.mapAPIKey = value.data()!["googleMapKey"];
+        }
+      }),
+      fireStore.collection(CollectionName.settings).doc("globalValue").get().then((value) {
+        if (value.exists) {
+          AppColors.lightsecondprimary = Color(int.parse(value.data()?['app_driver_light_color'].replaceFirst("#", "0xff")));
+          AppColors.darksecondprimary = Color(int.parse(value.data()?['app_driver_color'].replaceFirst("#", "0xff")));
+          Constant.distanceType = value.data()!["distanceType"];
+          Constant.radius = value.data()!["radius"];
+          Constant.minimumAmountToWithdrawal = value.data()!["minimumAmountToWithdrawal"];
+          Constant.minimumDepositToRideAccept = value.data()!["minimumDepositToRideAccept"];
+          Constant.mapType = value.data()!["mapType"];
+          Constant.selectedMapType = value.data()!["selectedMapType"];
+          Constant.driverLocationUpdate = value.data()!["driverLocationUpdate"];
+          Constant.isVerifyDocument = value.data()!["isVerifyDocument"];
+          Constant.isSubscriptionModelApplied = value.data()!["subscription_model"];
+          Constant.regionCode = value.data()!["regionCode"];
+          Constant.regionCountry = value.data()!["regionCountry"];
+        }
+      }),
+      fireStore.collection(CollectionName.settings).doc("notification_setting").get().then((value) {
+        if (value.exists && value.data() != null) {
           Constant.senderId = value.data()!['senderId'].toString();
-          Constant.jsonNotificationFileURL =
-              value.data()!['serviceJson'].toString();
+          Constant.jsonNotificationFileURL = value.data()!['serviceJson'].toString();
         }
-      }
-    });
+      }),
+      fireStore.collection(CollectionName.settings).doc("global").get().then((value) {
+        if (value.exists) {
+          if (value.data()!["privacyPolicy"] != null) {
+            Constant.privacyPolicy = <LanguagePrivacyPolicy>[];
+            value.data()!["privacyPolicy"].forEach((v) {
+              Constant.privacyPolicy.add(LanguagePrivacyPolicy.fromJson(v));
+            });
+          }
+          if (value.data()!["termsAndConditions"] != null) {
+            Constant.termsAndConditions = <LanguageTermsCondition>[];
+            value.data()!["termsAndConditions"].forEach((v) {
+              Constant.termsAndConditions.add(LanguageTermsCondition.fromJson(v));
+            });
+          }
+          Constant.appVersion = value.data()!["appVersion"];
+        }
+      }),
+      fireStore.collection(CollectionName.settings).doc("referral").get().then((value) {
+        if (value.exists) {
+          Constant.referralCustomerAmount = value.data()!["referralAmount"];
+          Constant.referralDriverAmount = value.data()!["referralAmountDriver"];
+        }
+      }),
+      fireStore.collection(CollectionName.settings).doc("contact_us").get().then((value) {
+        if (value.exists) {
+          Constant.supportURL = value.data()!["supportURL"];
+        }
+      }),
+    ]);
 
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("adminCommission")
-        .get()
-        .then((value) {
+    fireStore.collection(CollectionName.settings).doc("adminCommission").snapshots().listen((value) {
       if (value.data() != null) {
-        AdminCommission adminCommission =
-            AdminCommission.fromJson(value.data()!);
-        Constant.adminCommission = adminCommission;
-      }
-    });
-
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("referral")
-        .get()
-        .then((value) {
-      if (value.exists) {
-        Constant.referralCustomerAmount = value.data()!["referralAmount"];
-        Constant.referralDriverAmount = value.data()!["referralAmountDriver"];
-      }
-    });
-
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("global")
-        .get()
-        .then((value) {
-      if (value.exists) {
-        if (value.data()!["privacyPolicy"] != null) {
-          Constant.privacyPolicy = <LanguagePrivacyPolicy>[];
-          value.data()!["privacyPolicy"].forEach((v) {
-            Constant.privacyPolicy.add(LanguagePrivacyPolicy.fromJson(v));
-          });
+        AdminCommission adminCommission = AdminCommission.fromJson(value.data()!);
+        if (adminCommission.isEnabled == true) {
+          Constant.adminCommission = adminCommission;
         }
-
-        if (value.data()!["termsAndConditions"] != null) {
-          Constant.termsAndConditions = <LanguageTermsCondition>[];
-          value.data()!["termsAndConditions"].forEach((v) {
-            Constant.termsAndConditions.add(LanguageTermsCondition.fromJson(v));
-          });
-        }
-        Constant.appVersion = value.data()!["appVersion"];
-        // Constant.globalUrl = value.data()!["ownerPanelUrl"] ?? '';
-      }
-    });
-
-    await fireStore
-        .collection(CollectionName.settings)
-        .doc("contact_us")
-        .get()
-        .then((value) {
-      if (value.exists) {
-        Constant.supportURL = value.data()!["supportURL"];
       }
     });
   }
